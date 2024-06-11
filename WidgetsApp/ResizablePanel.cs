@@ -1,11 +1,29 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 
 namespace WidgetsApp
 {
     internal class ResizablePanel : Panel
     {
+        //moving part
+        bool Dragging = false;
+        Point DragStart = Point.Empty;
+
+        bool Resizing = false;
+
+        bool MouseIsInLeftEdge = false;
+        bool MouseIsInRightEdge = false;
+        bool MouseIsInTopEdge = false;
+        bool MouseIsInBottomEdge = false;
+
+        Point CursorStartPoint = new Point();
+        Size CurrentStartSize = new Size();
+
+        public bool Editable = true;
+
+
         public ResizablePanel()
         {
             this.SuspendLayout();
@@ -13,21 +31,6 @@ namespace WidgetsApp
             this.ForeColor = SystemColors.ControlLightLight;
             this.Size = new Size(600, 400);
             this.ResumeLayout(false);
-
-            //moving part
-            bool Dragging = false;
-            Point DragStart = Point.Empty;
-
-            bool Resizing = false;
-
-            bool MouseIsInLeftEdge = false;
-            bool MouseIsInRightEdge = false;
-            bool MouseIsInTopEdge = false;
-            bool MouseIsInBottomEdge = false;
-
-            Point CursorStartPoint = new Point();
-            Size CurrentStartSize = new Size();
-
 
             this.MouseDown += delegate (object sender, MouseEventArgs e)
             {
@@ -52,6 +55,11 @@ namespace WidgetsApp
 
             this.MouseMove += delegate (object sender, MouseEventArgs e)
             {
+                if (!Editable)
+                {
+                    return;
+                }
+
                 if (!Dragging && !Resizing)
                 {
                     MouseIsInLeftEdge = Math.Abs(e.X) <= 5;
