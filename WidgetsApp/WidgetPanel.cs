@@ -3,6 +3,7 @@ using CefSharp.WinForms;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WidgetsApp
@@ -13,13 +14,13 @@ namespace WidgetsApp
 
         private Button editButton;
         private Button closeButton;
-        private Timer timer;
+        private System.Windows.Forms.Timer timer;
 
         public WidgetPanel() {
             this.Editable = false;
             this.Location = new Point(0, 120);
 
-            timer = new Timer();
+            timer = new System.Windows.Forms.Timer();
             timer.Interval = 1500;
             timer.Tick += timer1_Tick;
 
@@ -91,11 +92,8 @@ namespace WidgetsApp
                             else {
                                 CefSharp.PostMessage(""HoverFalse"")
                             }
-                        });
-                   ");
-
-                string script = File.ReadAllText(@"C:\Users\Bailey\Desktop\WidgetsApp\scripts\login.js");
-                browser.ExecuteScriptAsync(script);
+                        }); 
+                 ");
             }
         }
 
@@ -139,14 +137,6 @@ namespace WidgetsApp
                         this.Invoke(safeWrite);
                     }
                 }
-
-                
-
-                if (message.Contains("input"))
-                {
-                    browser.GetDevToolsClient()?.Input?.InsertTextAsync(message.Substring(6, message.Length));
-                }
-
             }
         }        
 
@@ -170,7 +160,7 @@ namespace WidgetsApp
             else
             {
                 editButton.Show();
-                closeButton.Show();
+                closeButton.Show(); 
             }
         }
     }
