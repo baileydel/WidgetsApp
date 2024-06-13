@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WidgetsApp
@@ -16,52 +17,10 @@ namespace WidgetsApp
         private Button closeButton;
         private System.Windows.Forms.Timer timer;
 
-        public WidgetPanel() {
-            this.Editable = false;
-            this.Location = new Point(0, 120);
-
-            timer = new System.Windows.Forms.Timer();
-            timer.Interval = 1500;
-            timer.Tick += timer1_Tick;
-
-            closeButton = new Button()
-            {
-                Size = new Size(20, 20),
-                BackColor = Color.Red,
-                Location = new Point(this.Width - 20, 0)
-            };
-
-            closeButton.Click += (sender, e) =>
-            {
-                this.Parent.Controls.Remove(this);
-            };
-
-            editButton = new Button()
-            {
-                Size = new Size(20, 20),
-                BackColor = Color.Teal,
-                Location = new Point(closeButton.Left - 20, 0)
-            };
-
-            editButton.Click += (sender, e) =>
-            {
-                Edit();
-            };
-
-            editButton.MouseHover += hm;
-            closeButton.MouseHover += hm;
-           
-            editButton.Hide();
-            closeButton.Hide();
-
-            this.Controls.Add(editButton);
-            this.Controls.Add(closeButton);
-
-            browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
-            browser.FrameLoadEnd += Browser_FrameLoadEnd;
-            browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
-
-            this.Controls.Add(browser);
+        public WidgetPanel()
+        {
+            InitializeComponent();
+            InitializeChromium();
         }
 
         public WidgetPanel(string url) : this()
@@ -80,65 +39,65 @@ namespace WidgetsApp
             }
         }
 
-        private void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        private async void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
             if (e.Frame.IsMain)
             {
-                browser.ExecuteScriptAsync(@"
-                        document.addEventListener('mousemove', function(e) {
-                            if (e.clientX > 560 && e.clientY < 20) {
-                                CefSharp.PostMessage(""HoverTrue"")
+
+                string script =
+                   @"
+                        let b = false;
+                        let func = function(e) {
+                            let o = e.clientX > 560 && e.clientY < 20;
+
+                            if (b !== o) {
+                                b = o;
+                                CefSharp.PostMessage({Type: ""Hover"", Data: b});
                             }
-                            else {
-                                CefSharp.PostMessage(""HoverFalse"")
-                            }
-                        }); 
-                 ");
+                        }
+
+                        document.addEventListener('mousemove', func);
+                   ";
+
+
+                await browser.EvaluateScriptAsync(script);
             }
         }
 
         private void Browser_JavascriptMessageReceived(object sender, JavascriptMessageReceivedEventArgs e)
         {
-            if (e.Message != null)
-            {    
-                string message = e.Message.ToString();
+            dynamic msg = e.Message;
+            var type = msg.Type;
+            var property = msg.Data;
+            //var callback = (IJavascriptCallback)msg.Callback;
+            //callback.ExecuteAsync(type);
 
-                if (message == "HoverTrue" ||  message == "HoverFalse")
+            if (msg != null)
+            {
+                Action safeWrite = null;
+                switch (type)
                 {
-                    Action safeWrite;
-                    if (message == "HoverFalse")
-                    {
-                        safeWrite = delegate
+                    case "Hover": 
                         {
-                            if (editButton.Visible)
+                            safeWrite = delegate
                             {
-                                timer.Start();
-                            }
-                            else
-                            {
-                                // Timer could already be started from just hovering, stop it
-                                timer.Stop();
-                            }
-                        };
-                    }
-                    else
-                    {
-                        safeWrite = delegate
-                        {
-                            if (!editButton.Visible)
-                            {
-                                timer.Start();
-                            }
-                        };
-                    }
+                                timer.Enabled = property;
 
-                    if (this.InvokeRequired)
-                    {
-                        this.Invoke(safeWrite);
-                    }
+                                if (editButton.Visible)
+                                {
+                                    timer.Enabled = !property;
+                                }
+                            };
+                            break;
+                        }
+                }
+
+                if (this.InvokeRequired)
+                {
+                    this.Invoke(safeWrite);
                 }
             }
-        }        
+        }
 
         // Only to be activated when mouseover button
         private void hm(object sender, EventArgs e)
@@ -149,19 +108,77 @@ namespace WidgetsApp
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void InitializeComponent()
         {
-            timer.Stop();
-            if (editButton.Visible)
+            this.Editable = false;
+            this.Location = new Point(0, 120);
+
+            timer = new System.Windows.Forms.Timer()
             {
-                editButton.Hide();
-                closeButton.Hide();
-            }
-            else
+                Interval = 1500
+            };
+
+            timer.Tick += (sender, e) =>
             {
-                editButton.Show();
-                closeButton.Show(); 
-            }
+                timer.Stop();
+                if (editButton.Visible)
+                {
+                    editButton.Hide();
+                    closeButton.Hide();
+                }
+                else
+                {
+                    editButton.Show();
+                    closeButton.Show();
+                }
+            };
+
+            closeButton = new Button()
+            {
+                Size = new Size(20, 20),
+                BackColor = Color.Red,
+                Location = new Point(this.Width - 20, 0),
+                Visible = false
+            };
+
+            closeButton.Click += (sender, e) =>
+            {
+                this.Parent.Controls.Remove(this);
+            };
+
+            closeButton.MouseHover += hm;
+
+            editButton = new Button()
+            {
+                Size = new Size(20, 20),
+                BackColor = Color.Teal,
+                Location = new Point(closeButton.Left - 20, 0),
+                Visible = false
+            };
+
+            editButton.Click += (sender, e) =>
+            {
+                Edit();
+            };
+
+            editButton.MouseHover += hm;
+
+            this.Controls.Add(editButton);
+            this.Controls.Add(closeButton);
+        }
+
+        private void InitializeChromium()
+        {
+            CefSharpSettings.ConcurrentTaskExecution = true;
+            browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
+            browser.FrameLoadEnd += Browser_FrameLoadEnd;
+            browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
+
+            // Register the JavaScript object and bind it to C#
+            browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
+            browser.JavascriptObjectRepository.Register("CefSharpHandler", new CefSharpHandler(browser), isAsync: true);
+
+            this.Controls.Add(browser);
         }
     }
 }
