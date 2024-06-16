@@ -1,5 +1,7 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WidgetsApp
@@ -13,7 +15,6 @@ namespace WidgetsApp
             this.browser = browser;
         }
 
-        // Method to handle PostMessage from JavaScript
         public async Task<bool> Input(string input)
         {
             await browser.GetDevToolsClient()?.Input?.InsertTextAsync(input);
