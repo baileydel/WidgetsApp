@@ -87,6 +87,14 @@ namespace WidgetsApp
         private void InitializeChromium()
         {
             CefSharpSettings.ConcurrentTaskExecution = true;
+            CefSettingsBase settings = new CefSettings
+            {
+                CachePath = @"C:\Users\Bailey\Desktop\WidgetsApp\browser"
+            };
+
+            settings.CefCommandLineArgs.Add("enable-persistent-cookies", "1");
+            Cef.Initialize(settings);
+
             browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
 
             browser.FrameLoadEnd += Browser_FrameLoadEnd;
@@ -122,9 +130,23 @@ namespace WidgetsApp
 
                 await browser.EvaluateScriptAsync(script);
 
-                if (e.Url == "https://app.rocketmoney.com/")
+                string f = e.Url.Replace("https://", "").Replace(".com", "");
+                string[] j = f.Split('/');
+
+                string r = j[0].Replace('.', '\\').Replace("www.", "") + "\\";
+                string p = @"C:\Users\Bailey\Desktop\WidgetsApp\scripts\" + r;
+                
+
+                if (Directory.Exists(p))
                 {
-                    await SendJavaScript("script");
+                    string[] files = Directory.GetFiles(p);
+                    foreach (var item in files)
+                    {
+                        if (item.Contains(".js"))
+                        {
+                            await SendJavaScript(item);
+                        }                        
+                    }
                 }
             }
         }
@@ -166,9 +188,8 @@ namespace WidgetsApp
 
         private async Task<bool> SendJavaScript(string path)
         {
-            string script = File.ReadAllText(@"C:\Users\Bailey\Desktop\WidgetsApp\scripts\login.js");
+            string script = File.ReadAllText(path);
             var m = await browser.EvaluateScriptAsync(script);
-
 
             if (!m.Success)
             {
