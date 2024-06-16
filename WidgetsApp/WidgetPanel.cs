@@ -3,6 +3,7 @@ using CefSharp.WinForms;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,7 +15,7 @@ namespace WidgetsApp
 
         private Button editButton;
         private Button closeButton;
-        private Timer timer;
+        private System.Windows.Forms.Timer timer;
 
         public WidgetPanel()
         {
@@ -29,7 +30,7 @@ namespace WidgetsApp
             this.Editable = false;
             this.Location = new Point(0, 120);
 
-            timer = new Timer()
+            timer = new System.Windows.Forms.Timer()
             {
                 Interval = 1500
             };
@@ -61,6 +62,7 @@ namespace WidgetsApp
             closeButton.Click += (sender, e) =>
             {
                 this.Parent.Controls.Remove(this);
+                browser = null;
             };
 
             closeButton.MouseHover += hm;
@@ -75,10 +77,13 @@ namespace WidgetsApp
 
             editButton.Click += (sender, e) =>
             {
+                browser.ShowDevTools();
                 Edit();
             };
 
             editButton.MouseHover += hm;
+
+
 
             this.Controls.Add(editButton);
             this.Controls.Add(closeButton);
@@ -86,15 +91,6 @@ namespace WidgetsApp
 
         private void InitializeChromium()
         {
-            CefSharpSettings.ConcurrentTaskExecution = true;
-            CefSettingsBase settings = new CefSettings
-            {
-                CachePath = @"C:\Users\Bailey\Desktop\WidgetsApp\browser"
-            };
-
-            settings.CefCommandLineArgs.Add("enable-persistent-cookies", "1");
-            Cef.Initialize(settings);
-
             browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
 
             browser.FrameLoadEnd += Browser_FrameLoadEnd;
@@ -102,6 +98,8 @@ namespace WidgetsApp
 
             browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
             browser.JavascriptObjectRepository.Register("CefSharpHandler", new CefSharpHandler(browser), isAsync: true);
+
+
 
             this.Controls.Add(browser);
         }
@@ -126,10 +124,7 @@ namespace WidgetsApp
                         document.addEventListener('mousemove', func);
                    ";
 
-                //browser.ShowDevTools();
-
                 await browser.EvaluateScriptAsync(script);
-
                 string f = e.Url.Replace("https://", "").Replace(".com", "");
                 string[] j = f.Split('/');
 
@@ -188,6 +183,8 @@ namespace WidgetsApp
 
         private async Task<bool> SendJavaScript(string path)
         {
+            Thread.Sleep(1000);
+            Console.WriteLine("Sending " + path);
             string script = File.ReadAllText(path);
             var m = await browser.EvaluateScriptAsync(script);
 
