@@ -7,7 +7,6 @@ namespace WidgetsApp
 {
     internal class ResizablePanel : Panel
     {
-        //moving part
         bool Dragging = false;
         Point DragStart = Point.Empty;
 
