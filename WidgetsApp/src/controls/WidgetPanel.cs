@@ -1,6 +1,7 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
@@ -77,13 +78,10 @@ namespace WidgetsApp
 
             editButton.Click += (sender, e) =>
             {
-                browser.ShowDevTools();
                 Edit();
             };
 
             editButton.MouseHover += hm;
-
-
 
             this.Controls.Add(editButton);
             this.Controls.Add(closeButton);
@@ -99,11 +97,8 @@ namespace WidgetsApp
             browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
             browser.JavascriptObjectRepository.Register("CefSharpHandler", new CefSharpHandler(browser), isAsync: true);
 
-
-
             this.Controls.Add(browser);
         }
-
 
         private async void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
@@ -125,13 +120,13 @@ namespace WidgetsApp
                    ";
 
                 await browser.EvaluateScriptAsync(script);
+
                 string f = e.Url.Replace("https://", "").Replace(".com", "");
                 string[] j = f.Split('/');
 
                 string r = j[0].Replace('.', '\\').Replace("www.", "") + "\\";
                 string p = @"C:\Users\Bailey\Desktop\WidgetsApp\scripts\" + r;
                 
-
                 if (Directory.Exists(p))
                 {
                     string[] files = Directory.GetFiles(p);
@@ -199,10 +194,35 @@ namespace WidgetsApp
         {
             this.Editable = !Editable;
 
+            Bitmap bmp = new Bitmap(browser.Width, browser.Height);
+            Graphics g = Graphics.FromImage(bmp);
+
             if (this.Editable)
             {
+                g.CopyFromScreen(PointToScreen(browser.Location), new Point(0, 0), browser.Size);
 
+                var blur = new GaussianBlur(bmp);
+                var result = blur.Process(10);
 
+                Rectangle r = new Rectangle(0, 0, result.Width, result.Height);
+                using (g = Graphics.FromImage(result))
+                {
+                    using (Brush cloud_brush = new SolidBrush(Color.FromArgb(128, Color.Black)))
+                    {
+                        g.FillRectangle(cloud_brush, r);
+                    }
+                }
+
+                this.BackgroundImage = result;
+                this.browser.Hide();
+            }
+            else
+            {
+                bmp.Dispose();
+                g.Dispose();
+                this.BackgroundImage.Dispose();
+                this.BackgroundImage = null;
+                this.browser.Show();
             }
         }
 

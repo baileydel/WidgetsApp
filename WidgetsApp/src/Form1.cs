@@ -11,6 +11,8 @@ namespace WidgetsApp
         public Form1()
         {
             InitializeComponent();
+            //this.TopMost = true;
+  
             this.BackColor = Color.LimeGreen;
             this.TransparencyKey = BackColor;
 
@@ -33,7 +35,6 @@ namespace WidgetsApp
         {
             Panel pane = new WidgetPanel();
             this.Controls.Add(pane);
-
         }
     }
 }
