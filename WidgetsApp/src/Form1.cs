@@ -14,7 +14,7 @@ namespace WidgetsApp
         public Form1()
         {
             InitializeComponent();
-  
+
             this.BackColor = Color.LimeGreen;
             this.TransparencyKey = BackColor;
 
@@ -57,6 +57,20 @@ namespace WidgetsApp
         {
             Panel pane = new WidgetPanel();
             this.Controls.Add(pane);
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            DialogResult r = openFileDialog1.ShowDialog();
+
+            if (r == DialogResult.OK)
+            {
+                openFileDialog1.CheckFileExists = true;      
+                string json = File.ReadAllText(openFileDialog1.FileName);
+                WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
+
+                this.Controls.Add(new WidgetPanel(data));
+            }
         }
     }
 }
