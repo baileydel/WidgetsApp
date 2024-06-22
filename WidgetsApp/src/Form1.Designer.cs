@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel1 = new ResizablePanel();
+            this.panel1 = new WidgetsApp.ResizablePanel();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
@@ -39,9 +39,10 @@
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
+            this.panel1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.panel1.Location = new System.Drawing.Point(437, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(658, 76);
+            this.panel1.Size = new System.Drawing.Size(662, 76);
             this.panel1.TabIndex = 0;
             // 
             // button2
@@ -90,10 +91,9 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private ResizablePanel panel1;
     }
 }
 
