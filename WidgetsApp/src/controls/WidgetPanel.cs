@@ -1,12 +1,13 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WidgetsApp.src.controls;
 
 namespace WidgetsApp
 {
@@ -18,13 +19,21 @@ namespace WidgetsApp
         private Button closeButton;
         private System.Windows.Forms.Timer timer;
 
+        private WidgetData data;
+
         public WidgetPanel()
         {
             InitializeComponent();
             InitializeChromium();
+
+            this.data = new WidgetData(this.Size, this.Location, "");
         }
 
-        public WidgetPanel(string url) : this() { }
+        public WidgetPanel(WidgetData data) : this() {
+            this.data = data;
+            this.Size = data.size;
+            this.Location = data.location;
+        }
 
         private void InitializeComponent()
         {
@@ -62,6 +71,7 @@ namespace WidgetsApp
 
             closeButton.Click += (sender, e) =>
             {
+                this.save();
                 this.Parent.Controls.Remove(this);
                 browser = null;
             };
@@ -102,6 +112,11 @@ namespace WidgetsApp
 
         private async void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
+            if (browser == null)
+            {
+                return;
+            }
+
             if (e.Frame.IsMain)
             {
                 string script =
@@ -178,6 +193,11 @@ namespace WidgetsApp
 
         private async Task<bool> SendJavaScript(string path)
         {
+            if (browser == null)
+            {
+                return false ;
+            }
+
             Thread.Sleep(1000);
             Console.WriteLine("Sending " + path);
             string script = File.ReadAllText(path);
@@ -233,6 +253,20 @@ namespace WidgetsApp
             {
                 timer.Stop();
             }
+        }
+
+        public void save()
+        {
+            this.data.location = this.Location;
+            this.data.size = this.Size;
+            
+            if (browser != null)
+            {
+          
+            }
+
+            string json = JsonConvert.SerializeObject(data);
+            File.WriteAllText(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json", json);
         }
     }
 }
