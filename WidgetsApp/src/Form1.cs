@@ -1,8 +1,11 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using Newtonsoft.Json;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using WidgetsApp.src.controls;
 
 namespace WidgetsApp
 {
@@ -11,7 +14,6 @@ namespace WidgetsApp
         public Form1()
         {
             InitializeComponent();
-            //this.TopMost = true;
   
             this.BackColor = Color.LimeGreen;
             this.TransparencyKey = BackColor;
@@ -24,10 +26,30 @@ namespace WidgetsApp
 
             settings.CefCommandLineArgs.Add("enable-persistent-cookies", "1");
             Cef.Initialize(settings);
+
+            string savepath = @"C:\Users\Bailey\Desktop\WidgetsApp\save";
+            string[] files = Directory.GetFiles(savepath);
+
+            foreach (string file in files)
+            {
+                string json = File.ReadAllText(file);
+                WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
+
+                this.Controls.Add(new WidgetPanel(data));
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            foreach (Control panel in this.Controls)
+            {
+                if (panel is WidgetPanel)
+                {
+                    ((WidgetPanel)panel).save();
+                }
+                
+            }
+
             Application.Exit();
         }
 
