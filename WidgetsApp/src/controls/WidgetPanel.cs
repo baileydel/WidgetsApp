@@ -27,6 +27,7 @@ namespace WidgetsApp
             InitializeChromium();
 
             this.data = new WidgetData(this.Size, this.Location, "");
+            
         }
 
         public WidgetPanel(WidgetData data) : this() {
@@ -49,16 +50,8 @@ namespace WidgetsApp
             {
                 timer.Stop();
 
-                if (editButton.Visible)
-                {
-                    editButton.Hide();
-                    closeButton.Hide();
-                }
-                else
-                {
-                    editButton.Show();
-                    closeButton.Show();
-                }
+                editButton.Visible = !editButton.Visible;
+                closeButton.Visible = !closeButton.Visible;
             };
 
             closeButton = new Button()
@@ -71,7 +64,13 @@ namespace WidgetsApp
 
             closeButton.Click += (sender, e) =>
             {
-                File.Delete(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json");
+                string import = @"C:\Users\Bailey\Desktop\WidgetsApp\import";
+                if (!Directory.Exists(import))
+                {
+                    Directory.CreateDirectory(import);
+                }
+
+                File.Move(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json", @"C:\Users\Bailey\Desktop\WidgetsApp\import\window1.json");
                 this.Parent.Controls.Remove(this);
                 browser = null;
             };
@@ -193,12 +192,11 @@ namespace WidgetsApp
 
         private async Task<bool> SendJavaScript(string path)
         {
+            Thread.Sleep(1000);
             if (browser == null)
             {
-                return false ;
+                return false;
             }
-
-            Thread.Sleep(1000);
             Console.WriteLine("Sending " + path);
             string script = File.ReadAllText(path);
             var m = await browser.EvaluateScriptAsync(script);
