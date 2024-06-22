@@ -71,7 +71,7 @@ namespace WidgetsApp
 
             closeButton.Click += (sender, e) =>
             {
-                this.save();
+                File.Delete(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json");
                 this.Parent.Controls.Remove(this);
                 browser = null;
             };
