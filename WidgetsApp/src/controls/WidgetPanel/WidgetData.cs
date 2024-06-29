@@ -14,9 +14,5 @@ namespace WidgetsApp.src.controls
             this.location = location;
             this.url = url;
         }
-
-
-
-        
     }
 }
