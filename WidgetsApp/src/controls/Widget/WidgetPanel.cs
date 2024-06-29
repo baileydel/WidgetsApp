@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace WidgetsApp
 {
@@ -147,43 +148,6 @@ namespace WidgetsApp
             return false;
         }
 
-        private void Edit()
-        {
-            this.Editable = !Editable;
-
-            Bitmap bmp = new Bitmap(browser.Width, browser.Height);
-            Graphics g = Graphics.FromImage(bmp);
-
-            if (this.Editable)
-            {
-                g.CopyFromScreen(PointToScreen(browser.Location), new Point(0, 0), browser.Size);
-
-                var blur = new GaussianBlur(bmp);
-                var result = blur.Process(10);
-
-                Rectangle r = new Rectangle(0, 0, result.Width, result.Height);
-                using (g = Graphics.FromImage(result))
-                {
-                    using (Brush cloud_brush = new SolidBrush(Color.FromArgb(128, Color.Black)))
-                    {
-                        g.FillRectangle(cloud_brush, r);
-                    }
-                }
-
-                this.BackgroundImage = result;
-                this.browser.Hide();
-            }
-            else
-            {
-                bmp.Dispose();
-                g.Dispose();
-                this.BackgroundImage.Dispose();
-                this.BackgroundImage = null;
-                this.browser.Show();
-            }
-        }
-
-
         public void save()
         {
             this.data.location = this.Location;
@@ -196,6 +160,14 @@ namespace WidgetsApp
 
             string json = JsonConvert.SerializeObject(data);
             File.WriteAllText(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json", json);
+        }
+
+        internal void Close()
+        {
+            //browser.Dispose();
+
+            this.Parent.Controls.Remove(this);
+            this.save();
         }
     }
 }
