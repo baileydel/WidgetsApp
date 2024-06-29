@@ -40,12 +40,18 @@ namespace WidgetsApp
             this.ForeColor = SystemColors.ControlLightLight;
             this.Size = new Size(600, 400);
             this.BorderStyle = BorderStyle.None;
-            Region = Region.FromHrgn(CreateRoundRectRgn(this.Left, this.Top, this.Width, this.Height, 20, 20));
-            this.ResumeLayout(false);
+            this.updateRegion();
 
+            this.ResumeLayout(false);
             this.MouseDown += panel_MouseDown;
             this.MouseUp += panel_MouseUp;
             this.MouseMove += panel_MouseMove;
+        }
+
+        public void updateRegion()
+        {
+            Region = Region.FromHrgn(CreateRoundRectRgn(this.Left, this.Top, this.Width + 60, this.Height, 20, 20));
+     
         }
 
         private void panel_MouseDown(object sender, MouseEventArgs e)
