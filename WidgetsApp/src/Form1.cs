@@ -47,9 +47,7 @@ namespace WidgetsApp
                 {
                     ((WidgetPanel)panel).save();
                 }
-                
             }
-
             Application.Exit();
         }
 
@@ -69,7 +67,12 @@ namespace WidgetsApp
                 string json = File.ReadAllText(openFileDialog1.FileName);
                 WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
 
-                this.Controls.Add(new WidgetPanel(data));
+                File.Delete(openFileDialog1.FileName);
+
+                WidgetPanel panel = new WidgetPanel(data);
+                panel.save();
+
+                this.Controls.Add(panel);
             }
         }
     }
