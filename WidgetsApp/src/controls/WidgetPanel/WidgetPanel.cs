@@ -13,21 +13,17 @@ namespace WidgetsApp
 {
     internal class WidgetPanel : ResizablePanel
     {
-        private ChromiumWebBrowser browser;
-
-        private Button editButton;
-        private Button closeButton;
-        private System.Windows.Forms.Timer timer;
-
+        public ChromiumWebBrowser browser;
+        private WidgetPanelController controller;
         private WidgetData data;
 
         public WidgetPanel()
         {
-            InitializeComponent();
+            InitializeComponents();
             InitializeChromium();
 
             this.data = new WidgetData(this.Size, this.Location, "");
-            
+            controller = new WidgetPanelController(this);
         }
 
         public WidgetPanel(WidgetData data) : this() {
@@ -36,69 +32,17 @@ namespace WidgetsApp
             this.Location = data.location;
         }
 
-        private void InitializeComponent()
+        private void InitializeComponents()
         {
             this.Editable = false;
             this.Location = new Point(0, 120);
-
-            timer = new System.Windows.Forms.Timer()
-            {
-                Interval = 1500
-            };
-
-            timer.Tick += (sender, e) =>
-            {
-                timer.Stop();
-
-                editButton.Visible = !editButton.Visible;
-                closeButton.Visible = !closeButton.Visible;
-            };
-
-            closeButton = new Button()
-            {
-                Size = new Size(20, 20),
-                BackColor = Color.Red,
-                Location = new Point(this.Width - 20, 0),
-                Visible = false
-            };
-
-            closeButton.Click += (sender, e) =>
-            {
-                string import = @"C:\Users\Bailey\Desktop\WidgetsApp\import";
-                if (!Directory.Exists(import))
-                {
-                    Directory.CreateDirectory(import);
-                }
-
-                File.Move(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json", @"C:\Users\Bailey\Desktop\WidgetsApp\import\window1.json");
-                this.Parent.Controls.Remove(this);
-                browser = null;
-            };
-
-            closeButton.MouseHover += hm;
-
-            editButton = new Button()
-            {
-                Size = new Size(20, 20),
-                BackColor = Color.Teal,
-                Location = new Point(closeButton.Left - 20, 0),
-                Visible = false
-            };
-
-            editButton.Click += (sender, e) =>
-            {
-                Edit();
-            };
-
-            editButton.MouseHover += hm;
-
-            this.Controls.Add(editButton);
-            this.Controls.Add(closeButton);
         }
 
         private void InitializeChromium()
         {
             browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
+            browser.Dock = DockStyle.None;
+            browser.Size = new Size(this.Width + 60, this.Height);
 
             browser.FrameLoadEnd += Browser_FrameLoadEnd;
             browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
@@ -172,12 +116,7 @@ namespace WidgetsApp
                         {
                             safeWrite = delegate
                             {
-                                timer.Enabled = property;
-
-                                if (editButton.Visible)
-                                {
-                                    timer.Enabled = !property;
-                                }
+                               
                             };
                             break;
                         }
@@ -192,11 +131,11 @@ namespace WidgetsApp
 
         private async Task<bool> SendJavaScript(string path)
         {
-            Thread.Sleep(1000);
             if (browser == null)
             {
                 return false;
             }
+
             Console.WriteLine("Sending " + path);
             string script = File.ReadAllText(path);
             var m = await browser.EvaluateScriptAsync(script);
@@ -244,14 +183,6 @@ namespace WidgetsApp
             }
         }
 
-        // Only to be activated when mouseover button
-        private void hm(object sender, EventArgs e)
-        {
-            if (editButton.Visible && timer.Enabled)
-            {
-                timer.Stop();
-            }
-        }
 
         public void save()
         {
