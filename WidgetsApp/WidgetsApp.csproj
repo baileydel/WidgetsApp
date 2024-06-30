@@ -64,8 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\CefSharpHandler.cs" />
-    <Compile Include="src\controls\WidgetPanel\WidgetData.cs" />
-    <Compile Include="src\controls\WidgetPanel\WidgetPanelController.cs" />
+    <Compile Include="src\controls\Widget\WidgetData.cs" />
+    <Compile Include="src\controls\Widget\WidgetPanelController.cs" />
     <Compile Include="src\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,7 +78,7 @@
     <Compile Include="src\controls\ResizablePanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="src\controls\WidgetPanel\WidgetPanel.cs">
+    <Compile Include="src\controls\Widget\WidgetPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <EmbeddedResource Include="src\Form1.resx">
@@ -96,7 +96,7 @@
     <EmbeddedResource Include="src\controls\ResizablePanel.resx">
       <DependentUpon>ResizablePanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="src\controls\WidgetPanel\WidgetPanel.resx">
+    <EmbeddedResource Include="src\controls\Widget\WidgetPanel.resx">
       <DependentUpon>WidgetPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
