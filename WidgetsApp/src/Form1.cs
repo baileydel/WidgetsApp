@@ -15,18 +15,26 @@ namespace WidgetsApp
         {
             InitializeComponent();
 
-            this.BackColor = Color.LimeGreen;
-            this.TransparencyKey = BackColor;
+            BackColor = Color.LimeGreen;
+            TransparencyKey = BackColor;
 
-            CefSharpSettings.ConcurrentTaskExecution = true;
             CefSettingsBase settings = new CefSettings
             {
                 CachePath = @"C:\Users\Bailey\Desktop\WidgetsApp\browser"
             };
 
+            CefSharpSettings.ConcurrentTaskExecution = true;
+            CefSharpSettings.ShutdownOnExit = true;
+
             settings.CefCommandLineArgs.Add("enable-persistent-cookies", "1");
+
             Cef.Initialize(settings);
 
+            loadPrevious();
+        }
+
+        private void loadPrevious()
+        {
             string savepath = @"C:\Users\Bailey\Desktop\WidgetsApp\save";
             string[] files = Directory.GetFiles(savepath);
 
