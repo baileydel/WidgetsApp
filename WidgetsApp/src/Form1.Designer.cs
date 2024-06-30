@@ -1,4 +1,6 @@
-﻿namespace WidgetsApp
+﻿using System.Drawing;
+
+namespace WidgetsApp
 {
     partial class Form1
     {
