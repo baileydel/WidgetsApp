@@ -4,11 +4,9 @@ using Newtonsoft.Json;
 using System;
 using System.Drawing;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace WidgetsApp
 {
@@ -23,27 +21,28 @@ namespace WidgetsApp
             InitializeComponents();
             InitializeChromium();
 
-            this.data = new WidgetData(this.Size, this.Location, "");
+            data = new WidgetData(Size, Location, "");
             controller = new WidgetPanelController(this);
         }
 
         public WidgetPanel(WidgetData data) : this() {
             this.data = data;
-            this.Size = data.size;
-            this.Location = data.location;
+            Size = data.size;
+            Location = data.location;
         }
 
         private void InitializeComponents()
         {
-            this.Editable = false;
-            this.Location = new Point(0, 120);
+            Editable = false;
+            Location = new Point(0, 120);
         }
 
         private void InitializeChromium()
         {
             browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
             browser.Dock = DockStyle.None;
-            browser.Size = new Size(this.Width + 60, this.Height);
+            browser.Size = new Size(Width, Height);
+            browser.Location = new Point(1, 1);
 
             browser.FrameLoadEnd += Browser_FrameLoadEnd;
             browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
@@ -51,7 +50,7 @@ namespace WidgetsApp
             browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
             browser.JavascriptObjectRepository.Register("CefSharpHandler", new CefSharpHandler(browser), isAsync: true);
 
-            this.Controls.Add(browser);
+            Controls.Add(browser);
         }
 
         private async void Browser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
@@ -64,16 +63,16 @@ namespace WidgetsApp
             if (e.Frame.IsMain)
             {
                 string script =
-                   @"
+                   $@"
                         let b = false;
-                        let func = function(e) {
-                            let o = e.clientX > 560 && e.clientY < 20;
+                        let func = function(e) {{
+                            let o = e.clientY < 20;
 
-                            if (b !== o) {
+                            if (b !== o) {{
                                 b = o;
-                                CefSharp.PostMessage({Type: 'Hover', Data: b});
-                            }
-                        }
+                                CefSharp.PostMessage({{Type: 'Hover', Data: b}});
+                            }}
+                        }}
 
                         document.addEventListener('mousemove', func);
                    ";
@@ -104,7 +103,7 @@ namespace WidgetsApp
         {
             dynamic msg = e.Message;
             var type = msg.Type;
-            var property = msg.Data;
+            var data = msg.Data;
             //var callback = (IJavascriptCallback)msg.Callback;
             //callback.ExecuteAsync(type);
 
@@ -117,7 +116,7 @@ namespace WidgetsApp
                         {
                             safeWrite = delegate
                             {
-                               
+                                controller.show(data);
                             };
                             break;
                         }
@@ -139,6 +138,7 @@ namespace WidgetsApp
 
             Console.WriteLine("Sending " + path);
             string script = File.ReadAllText(path);
+
             var m = await browser.EvaluateScriptAsync(script);
 
             if (!m.Success)
@@ -150,8 +150,8 @@ namespace WidgetsApp
 
         public void save()
         {
-            this.data.location = this.Location;
-            this.data.size = this.Size;
+            data.location = Location;
+            data.size = Size;
             
             if (browser != null)
             {
@@ -166,8 +166,8 @@ namespace WidgetsApp
         {
             //browser.Dispose();
 
-            this.Parent.Controls.Remove(this);
-            this.save();
+            Parent.Controls.Remove(this);
+            save();
         }
     }
 }
