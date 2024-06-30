@@ -35,23 +35,17 @@ namespace WidgetsApp
 
         public ResizablePanel()
         {
-            this.SuspendLayout();
-            this.BackColor = Color.Black;
-            this.ForeColor = SystemColors.ControlLightLight;
-            this.Size = new Size(600, 400);
-            this.BorderStyle = BorderStyle.None;
-            this.updateRegion();
+            SuspendLayout();
+            BackColor = Color.Black;
+            ForeColor = SystemColors.ControlLightLight;
+            Size = new Size(600, 400);
+            ResumeLayout(false);
 
-            this.ResumeLayout(false);
-            this.MouseDown += panel_MouseDown;
-            this.MouseUp += panel_MouseUp;
-            this.MouseMove += panel_MouseMove;
-        }
+            MouseDown += panel_MouseDown;
+            MouseUp += panel_MouseUp;
+            MouseMove += panel_MouseMove;
 
-        public void updateRegion()
-        {
-            Region = Region.FromHrgn(CreateRoundRectRgn(this.Left, this.Top, this.Width + 60, this.Height, 20, 20));
-     
+            AutoSize = false;
         }
 
         private void panel_MouseDown(object sender, MouseEventArgs e)
@@ -111,9 +105,12 @@ namespace WidgetsApp
                 {
                     this.Height = (e.Y - CursorStartPoint.Y) + CurrentStartSize.Height;
                 }
-                Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
             }
-
+            else if (Dragging)
+            {
+                this.Left = Math.Max(0, e.X + this.Left - DragStart.X);
+                this.Top = Math.Max(0, e.Y + this.Top - DragStart.Y);
+            }
 
             if (MouseIsInLeftEdge || MouseIsInRightEdge)
             {
@@ -137,12 +134,6 @@ namespace WidgetsApp
             else
             {
                 this.Cursor = Cursors.Default;
-            }
-
-            if (Dragging && !Resizing)
-            {
-                this.Left = Math.Max(0, e.X + this.Left - DragStart.X);
-                this.Top = Math.Max(0, e.Y + this.Top - DragStart.Y);
             }
         }
     }
