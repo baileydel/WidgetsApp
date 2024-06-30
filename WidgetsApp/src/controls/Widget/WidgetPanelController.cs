@@ -1,7 +1,5 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
-using System;
-using CefSharp;
 
 namespace WidgetsApp.src.controls
 {
@@ -9,119 +7,92 @@ namespace WidgetsApp.src.controls
     {
         private WidgetPanel parent;
 
-
         private Button closeButton;
         private Button lockButton;
         private Button stayOnTopButton;
+        private Timer Timer;
 
         private TextBox urlBox;
 
         int height = 40;
 
-        bool Dragging = false;
-        Point DragStart = Point.Empty;
+        private bool locked = false;
 
         public WidgetPanelController(WidgetPanel parent) { 
             this.parent = parent;
             Size size = new Size(25,25);
 
+            parent.Resize += (sender, args) =>
+            {
+                resize();
+            };
+
             closeButton = new Button()
             {
                 Size = size,
-                Location = new Point(parent.Width - 40, 5),
                 BackColor = Color.Red
             };
 
             closeButton.Click += (sender, args) =>
             {
-                parent.Parent.Controls.Remove(parent);
+                parent.Close();
             };
 
             lockButton = new Button()
             {
                 Size = size,
-                Location = new Point(closeButton.Left - 40, 5),
                 BackColor = Color.Aqua
             };
 
             lockButton.Click += (sender, args) =>
             {
-                parent.Editable =  !parent.Editable;
-
-                if (parent.Editable)
-                {
-                    lockButton.BackColor = Color.Lime;
-                    parent.browser.Top = 40;
-                }
-                else
-                {
-                    lockButton.BackColor = Color.Aqua ;
-                    parent.browser.Top = 0;
-                }
-            
-
+                locked = !locked;
             };
 
             stayOnTopButton = new Button()
             {
                 Size = size,
-                Location = new Point(lockButton.Left - 40, 5),
                 BackColor = Color.White
             };
 
             urlBox = new TextBox()
             {
-                Size = new Size(parent.Width - 160, 40),
                 Location = new Point(10, 10),
             };
 
+            resize();
 
             parent.Controls.Add(closeButton);
             parent.Controls.Add(lockButton);
             parent.Controls.Add(stayOnTopButton);
             parent.Controls.Add(urlBox);
+        }
 
-            lockButton.BringToFront();
+        public void show(bool b)
+        {
+            parent.Editable = b;
+
+            if (parent.Editable)
+            {
+                lockButton.BackColor = Color.Lime;
+                parent.browser.Location = new Point(1, 40);
+                parent.browser.Size = new Size(parent.Width - 2, parent.Height - 42);  
+            }
+            else
+            {
+                lockButton.BackColor = Color.Aqua;
+                parent.browser.Location = new Point(1, 1);
+                parent.browser.Size = new Size(parent.Width - 2, parent.Height - 2);
+            }
         }
 
         private void resize()
         {
-
-        }
-
-        public void show()
-        {
-            
-        }
-
-        public void hide()
-        {
-
-        }
-
-        public void timerToggle()
-        {
-
-        }
-
-        private void panel_MouseDown(object sender, MouseEventArgs e)
-        {
-            Dragging = true;
-            DragStart = new Point(e.X, e.Y);
-        }
-
-        private void panel_MouseUp(object sender, MouseEventArgs e)
-        {
-            Dragging = false;
-        }
-
-        private void panel_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (Dragging)
-            {
-                parent.Left = Math.Max(0, e.X + parent.Left - DragStart.X);
-                parent.Top = Math.Max(0, e.Y + parent.Top - DragStart.Y);
-            }
+            closeButton.Location = new Point(parent.Width - 40, 5);
+            lockButton.Location = new Point(closeButton.Left - 40, 5);
+            stayOnTopButton.Location = new Point(lockButton.Left - 40, 5);
+            urlBox.Size = new Size(parent.Width - 160, 40);
+            parent.browser.Size = new Size(parent.Width - 2, parent.Height - 2);
         }
     }
 }
