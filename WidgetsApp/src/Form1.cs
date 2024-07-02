@@ -11,6 +11,8 @@ namespace WidgetsApp
 {
     public partial class Form1 : Form
     {
+        public static readonly string PATH = AppDomain.CurrentDomain.BaseDirectory;
+
         public Form1()
         {
             InitializeComponent();
@@ -20,7 +22,7 @@ namespace WidgetsApp
 
             CefSettingsBase settings = new CefSettings
             {
-                CachePath = @"C:\Users\Bailey\Desktop\WidgetsApp\browser"
+                CachePath = PATH + @"\browser"
             };
 
             CefSharpSettings.ConcurrentTaskExecution = true;
@@ -35,7 +37,7 @@ namespace WidgetsApp
 
         private void loadPrevious()
         {
-            string savepath = @"C:\Users\Bailey\Desktop\WidgetsApp\save";
+            string savepath = PATH + @"\save";
             string[] files = Directory.GetFiles(savepath);
 
             foreach (string file in files)
@@ -43,26 +45,19 @@ namespace WidgetsApp
                 string json = File.ReadAllText(file);
                 WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
 
-                this.Controls.Add(new WidgetPanel(data));
+                Controls.Add(new WidgetPanel(data));
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            foreach (Control panel in this.Controls)
-            {
-                if (panel is WidgetPanel)
-                {
-                    ((WidgetPanel)panel).save();
-                }
-            }
             Application.Exit();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Panel pane = new WidgetPanel();
-            this.Controls.Add(pane);
+            Panel pane = new WidgetPanel(null);
+            Controls.Add(pane);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -80,7 +75,18 @@ namespace WidgetsApp
                 WidgetPanel panel = new WidgetPanel(data);
                 panel.save();
 
-                this.Controls.Add(panel);
+                Controls.Add(panel);
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Control panel in Controls)
+            {
+                if (panel is WidgetPanel)
+                {
+                    ((WidgetPanel)panel).save();
+                }
             }
         }
     }
