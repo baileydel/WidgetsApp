@@ -16,30 +16,29 @@ namespace WidgetsApp
         private WidgetPanelController controller;
         private WidgetData data;
 
-        public WidgetPanel()
+        public WidgetPanel(WidgetData data)
         {
-            InitializeComponents();
-            InitializeChromium();
+            Editable = false;
+            if (data != null)
+            {
+                this.data = data;
+                Size = data.size;
+                Location = data.location;
+            }
+            else
+            {
+                data = new WidgetData(Size, Location, "https://www.google.com");
+            }
 
-            data = new WidgetData(Size, Location, "");
+            InitializeChromium(data.url);
+
             controller = new WidgetPanelController(this);
         }
 
-        public WidgetPanel(WidgetData data) : this() {
-            this.data = data;
-            Size = data.size;
-            Location = data.location;
-        }
-
-        private void InitializeComponents()
+        private void InitializeChromium(string url)
         {
-            Editable = false;
-            Location = new Point(0, 120);
-        }
+            browser = new ChromiumWebBrowser(url);
 
-        private void InitializeChromium()
-        {
-            browser = new ChromiumWebBrowser("https://app.rocketmoney.com/");
             browser.Dock = DockStyle.None;
             browser.Size = new Size(Width, Height);
             browser.Location = new Point(1, 1);
@@ -83,7 +82,7 @@ namespace WidgetsApp
                 string[] j = f.Split('/');
 
                 string r = j[0].Replace('.', '\\').Replace("www.", "") + "\\";
-                string p = @"C:\Users\Bailey\Desktop\WidgetsApp\scripts\" + r;
+                string p = Form1.PATH + @"\scripts\" + r;
                 
                 if (Directory.Exists(p))
                 {
@@ -104,8 +103,6 @@ namespace WidgetsApp
             dynamic msg = e.Message;
             var type = msg.Type;
             var data = msg.Data;
-            //var callback = (IJavascriptCallback)msg.Callback;
-            //callback.ExecuteAsync(type);
 
             if (msg != null)
             {
@@ -152,22 +149,24 @@ namespace WidgetsApp
         {
             data.location = Location;
             data.size = Size;
-            
-            if (browser != null)
-            {
-          
-            }
+            data.url = browser.Address;
 
             string json = JsonConvert.SerializeObject(data);
-            File.WriteAllText(@"C:\Users\Bailey\Desktop\WidgetsApp\save\window1.json", json);
+
+            string f = data.url.Replace("https://", "").Replace(".com", "").Replace("app.", "").Replace("www.", "");
+            string[] j = f.Split('/');
+
+            File.WriteAllText(Form1.PATH + @"\save\" + j[0] + ".json", json);
         }
 
         internal void Close()
         {
-            //browser.Dispose();
+            string f = data.url.Replace("https://", "").Replace(".com", "").Replace("app.", "").Replace("www.", "");
+            string[] j = f.Split('/');
+
+            File.Delete(Form1.PATH + @"\save\" + j[0] + ".json");
 
             Parent.Controls.Remove(this);
-            save();
         }
     }
 }
