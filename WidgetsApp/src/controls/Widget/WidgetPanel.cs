@@ -37,11 +37,12 @@ namespace WidgetsApp
 
         private void InitializeChromium(string url)
         {
-            browser = new ChromiumWebBrowser(url);
-
-            browser.Dock = DockStyle.None;
-            browser.Size = new Size(Width, Height);
-            browser.Location = new Point(1, 1);
+            browser = new ChromiumWebBrowser(url)
+            {
+                Dock = DockStyle.None,
+                Size = new Size(Width, Height),
+                Location = new Point(1, 1)
+            };
 
             browser.FrameLoadEnd += Browser_FrameLoadEnd;
             browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
@@ -145,7 +146,7 @@ namespace WidgetsApp
             return false;
         }
 
-        public void save()
+        public void Save()
         {
             data.location = Location;
             data.size = Size;
@@ -159,7 +160,7 @@ namespace WidgetsApp
             File.WriteAllText(Form1.PATH + @"\save\" + j[0] + ".json", json);
         }
 
-        internal void Close()
+        internal void Delete()
         {
             string f = data.url.Replace("https://", "").Replace(".com", "").Replace("app.", "").Replace("www.", "");
             string[] j = f.Split('/');
