@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
+using System;
 
 namespace WidgetsApp.src.controls
 {
@@ -13,9 +14,6 @@ namespace WidgetsApp.src.controls
         private Timer Timer;
 
         private TextBox urlBox;
-
-        int height = 40;
-
         private bool locked = false;
 
         public WidgetPanelController(WidgetPanel parent) { 
@@ -59,6 +57,32 @@ namespace WidgetsApp.src.controls
             {
                 Location = new Point(10, 10),
             };
+
+            urlBox.KeyDown += (sender, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    parent.browser.Load(urlBox.Text);
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
+            };
+
+            parent.browser.FrameLoadEnd += (sender, e) =>
+            {
+                Action safeWrite = null;
+
+                safeWrite = delegate
+                {
+                    urlBox.Text = parent.browser.Address;
+                };
+
+                if (safeWrite != null)
+                {
+                    parent.Invoke(safeWrite);
+                }
+            };
+
 
             resize();
 
