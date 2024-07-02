@@ -73,7 +73,7 @@ namespace WidgetsApp
                 File.Delete(openFileDialog1.FileName);
 
                 WidgetPanel panel = new WidgetPanel(data);
-                panel.save();
+                panel.Save();
 
                 Controls.Add(panel);
             }
@@ -85,7 +85,7 @@ namespace WidgetsApp
             {
                 if (panel is WidgetPanel)
                 {
-                    ((WidgetPanel)panel).save();
+                    ((WidgetPanel)panel).Save();
                 }
             }
         }
