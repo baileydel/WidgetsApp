@@ -27,7 +27,7 @@ namespace WidgetsApp
             }
             else
             {
-                data = new WidgetData(Size, Location, "https://www.google.com");
+                this.data = new WidgetData(Size, Location, "https://www.google.com");
             }
 
             InitializeChromium(data.url);
