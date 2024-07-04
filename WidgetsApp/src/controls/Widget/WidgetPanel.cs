@@ -18,17 +18,16 @@ namespace WidgetsApp
 
         public WidgetPanel(WidgetData data)
         {
+            if (data == null)
+            {
+                data = new WidgetData(Size, Location, "https://www.google.com");
+            }
+
             Editable = false;
-            if (data != null)
-            {
-                this.data = data;
-                Size = data.size;
-                Location = data.location;
-            }
-            else
-            {
-                this.data = new WidgetData(Size, Location, "https://www.google.com");
-            }
+
+            this.data = data;
+            Size = data.size;
+            Location = data.location;
 
             InitializeChromium(data.url);
 
