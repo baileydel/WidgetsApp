@@ -33,7 +33,7 @@ namespace WidgetsApp.src.controls
 
             closeButton.Click += (sender, args) =>
             {
-                parent.Close();
+                parent.Delete();
             };
 
             lockButton = new Button()
