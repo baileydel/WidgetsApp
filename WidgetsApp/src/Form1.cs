@@ -56,8 +56,8 @@ namespace WidgetsApp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Panel pane = new WidgetPanel(null);
-            Controls.Add(pane);
+            WidgetForm form = new WidgetForm();
+            form.Show();
         }
 
         private void button4_Click(object sender, EventArgs e)
