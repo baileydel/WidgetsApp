@@ -64,8 +64,8 @@
             this.UrlTextBox.Name = "UrlTextBox";
             this.UrlTextBox.Size = new System.Drawing.Size(483, 20);
             this.UrlTextBox.TabIndex = 3;
-            this.UrlTextBox.TextChanged += new System.EventHandler(this.urlBox_TextChanged);
-            this.UrlTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.urlBox_KeyPress);
+            this.UrlTextBox.TextChanged += new System.EventHandler(this.UrlBox_TextChanged);
+            this.UrlTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.UrlBox_KeyPress);
             // 
             // urlLabel
             // 
