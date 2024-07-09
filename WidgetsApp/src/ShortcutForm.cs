@@ -54,7 +54,7 @@ namespace WidgetsApp
         {
             if (this.Parent is MainForm mainForm)
             {
-                mainForm.AddShortcut(this);
+                mainForm.AddShortcut(new WidgetData(NameTextBox.Text, UrlTextBox.Text));
                 Close();
             }
         }
