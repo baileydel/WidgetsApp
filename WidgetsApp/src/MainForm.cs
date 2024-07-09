@@ -2,17 +2,22 @@
 using CefSharp.WinForms;
 using Newtonsoft.Json;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 namespace WidgetsApp
 {
     public partial class MainForm : Form
-    {
+    { 
         public static readonly string PATH = AppDomain.CurrentDomain.BaseDirectory;
+        public static readonly string SAVEPATH = PATH + @"\save";
+        public static readonly string SCRIPTPATH = PATH + @"\scripts";
+        public static readonly string BROWSERPATH = PATH + @"\browser";
 
         public MainForm()
         {
+            MakePaths();
             InitializeComponent();
             InitializeCefSharp();
             LoadPrevious();
@@ -22,7 +27,7 @@ namespace WidgetsApp
         {
             CefSettingsBase settings = new CefSettings
             {
-                CachePath = PATH + @"\browser"
+                CachePath = BROWSERPATH
             };
 
             CefSharpSettings.ConcurrentTaskExecution = true;
@@ -33,10 +38,27 @@ namespace WidgetsApp
             Cef.Initialize(settings);
         }
 
+        private void MakePaths()
+        {
+            if (!Directory.Exists(SAVEPATH))
+            {
+                Directory.CreateDirectory(SAVEPATH);
+            }
+
+            if (!Directory.Exists(SCRIPTPATH))
+            {
+                Directory.CreateDirectory(SCRIPTPATH);
+            }
+
+            if (!Directory.Exists(BROWSERPATH))
+            {
+                Directory.CreateDirectory(BROWSERPATH);
+            }
+        }
+
         private void LoadPrevious()
         {
-            string savepath = PATH + @"\save";
-            string[] files = Directory.GetFiles(savepath);
+            string[] files = Directory.GetFiles(SAVEPATH);
 
             foreach (string file in files)
             {
