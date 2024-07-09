@@ -69,10 +69,12 @@ namespace WidgetsApp
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void ShortcutButton_Click(object sender, EventArgs e)
         {
-        
-            CreateChild(null);
+            flowLayoutPanel1.Hide();
+
+            UserControl shortuct = new UserControl1();
+            this.Controls.Add(shortuct);
         }
 
 
@@ -80,6 +82,18 @@ namespace WidgetsApp
         {
             WidgetForm form = new WidgetForm(data);
             form.Show();
+        }
+
+        public void HideFlow(bool b)
+        {
+            if (b)
+            {
+                flowLayoutPanel1.Hide();
+            }
+            else
+            {
+                flowLayoutPanel1.Show();
+            }
         }
 
         private void import(object sender, EventArgs e)
