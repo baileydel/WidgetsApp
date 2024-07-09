@@ -73,13 +73,11 @@ namespace WidgetsApp
         {
             flowLayoutPanel1.Hide();
 
-            UserControl shortuct = new UserControl1();
             UserControl shortuct = new ShortcutForm();
             this.Controls.Add(shortuct);
         }
 
 
-        private void CreateChild(WidgetData data)
         private void LaunchShortcut(WidgetData data)
         {
             WidgetForm form = new WidgetForm(data);
