@@ -1,6 +1,6 @@
 ﻿namespace WidgetsApp
 {
-    partial class UserControl1
+    partial class ShortcutForm
     {
         /// <summary> 
         /// Required designer variable.
