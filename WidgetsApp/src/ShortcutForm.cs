@@ -5,9 +5,9 @@ using System.Windows.Forms;
 
 namespace WidgetsApp
 {
-    public partial class UserControl1 : UserControl
+    public partial class ShortcutForm : UserControl
     {
-        public UserControl1()
+        public ShortcutForm()
         {
             InitializeComponent();
 
