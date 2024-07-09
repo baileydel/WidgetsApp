@@ -18,12 +18,12 @@ namespace WidgetsApp
         }
 
         #region UrlBox
-        private void urlBox_TextChanged(object sender, EventArgs e)
+        private void UrlBox_TextChanged(object sender, EventArgs e)
         {
             EnableDoneButton(UrlTextBox.TextLength > 0);
         }
 
-        private void urlBox_KeyPress(object sender, KeyPressEventArgs e)
+        private void UrlBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
             {
