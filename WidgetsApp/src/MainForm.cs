@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using WidgetsApp.src.controls;
 
 namespace WidgetsApp
 {
@@ -19,6 +20,19 @@ namespace WidgetsApp
         {
             MakePaths();
             InitializeComponent();
+
+            shortcutControl2.state = 1;
+            shortcutControl2.OuterText = "Add shortcut";
+            shortcutControl2.InnerText = "+";
+            shortcutControl2.MouseClick += ShortcutButton_Click;
+
+            shortcutControl2.OuterColor = Color.FromArgb(0, 74, 119);
+            shortcutControl2.InnerColor = Color.FromArgb(0, 74, 119);    
+
+            shortcutControl2.InnerTextColor = Color.White;
+            shortcutControl2.InnerFontSize = 24;
+
+
             InitializeCefSharp();
             LoadPrevious();
         }
@@ -63,9 +77,7 @@ namespace WidgetsApp
             foreach (string file in files)
             {
                 string json = File.ReadAllText(file);
-                WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
-
-                CreateChild(data);
+                AddShortcut(JsonConvert.DeserializeObject<WidgetData>(json));
             }
         }
 
@@ -77,9 +89,22 @@ namespace WidgetsApp
             this.Controls.Add(shortuct);
         }
 
-
-        private void LaunchShortcut(WidgetData data)
+        public void AddShortcut(WidgetData data)
         {
+            ShortcutControl control = new ShortcutControl()
+            {
+                OuterText = data.Name,
+            };
+
+            control.MouseClick += (sender, e) => LaunchShortcut(data);
+      
+            flowLayoutPanel1.Controls.Add(control);
+            flowLayoutPanel1.Controls.SetChildIndex(shortcutControl2, flowLayoutPanel1.Controls.Count - 1);
+        }
+
+        public void LaunchShortcut(WidgetData data)
+        {
+            Console.WriteLine("Launching shortcut");
             WidgetForm form = new WidgetForm(data);
             form.Show();
         }
@@ -98,6 +123,8 @@ namespace WidgetsApp
 
         private void import(object sender, EventArgs e)
         {
+            /**
+             * 
             DialogResult r = openFileDialog1.ShowDialog();
 
             if (r == DialogResult.OK)
@@ -108,6 +135,8 @@ namespace WidgetsApp
 
                 File.Delete(openFileDialog1.FileName);
             }
+            */
         }
+
     }
 }

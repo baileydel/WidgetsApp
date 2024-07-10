@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Drawing;
 
 namespace WidgetsApp
@@ -10,17 +11,18 @@ namespace WidgetsApp
         public Size Size { get; set; }
         public string Url { get; set; }
 
-        public WidgetData(Size size, Point location, string url)
+        [JsonConstructor]
+        public WidgetData(string name, Size size, Point location, string url)
         {
-            Name = url; 
+            Name = name;
             Size = size;
             Location = location;
             Url = url;
         }
 
-        public WidgetData(string name, Size size, Point location, string url)
+        public WidgetData(Size size, Point location, string url)
         {
-            Name = name;
+            Name = url; 
             Size = size;
             Location = location;
             Url = url;
