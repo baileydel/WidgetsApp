@@ -46,12 +46,20 @@ namespace WidgetsApp
             // 
             // AddShortcutControl
             // 
-            this.AddShortcutControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.AddShortcutControl.BackColor = System.Drawing.Color.Transparent;
             this.AddShortcutControl.ForeColor = System.Drawing.Color.White;
+            this.AddShortcutControl.InnerColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(74)))), ((int)(((byte)(119)))));
+            this.AddShortcutControl.InnerFontSize = 24;
+            this.AddShortcutControl.InnerText = "+";
+            this.AddShortcutControl.InnerTextColor = System.Drawing.Color.White;
             this.AddShortcutControl.Location = new System.Drawing.Point(3, 3);
             this.AddShortcutControl.Name = "AddShortcutControl";
+            this.AddShortcutControl.OuterColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(74)))), ((int)(((byte)(119)))));
+            this.AddShortcutControl.OuterText = "Add shortcut";
             this.AddShortcutControl.Size = new System.Drawing.Size(120, 120);
+            this.AddShortcutControl.State = 1;
             this.AddShortcutControl.TabIndex = 2;
+            this.AddShortcutControl.MouseClick += new System.Windows.Forms.MouseEventHandler(this.AddShortcutControl_MouseClick);
             // 
             // MainForm
             // 

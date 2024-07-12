@@ -2,7 +2,7 @@
 using CefSharp.WinForms;
 using Newtonsoft.Json;
 using System;
-using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
@@ -15,22 +15,14 @@ namespace WidgetsApp
         public static readonly string SAVEPATH = PATH + @"\save";
         public static readonly string SCRIPTPATH = PATH + @"\scripts";
         public static readonly string BROWSERPATH = PATH + @"\browser";
+        public static readonly PrivateFontCollection privateFonts = new PrivateFontCollection();
 
         public MainForm()
         {
             MakePaths();
             InitializeComponent();
 
-            AddShortcutControl.state = 1;
-            AddShortcutControl.OuterText = "Add shortcut";
-            AddShortcutControl.InnerText = "+";
-            AddShortcutControl.MouseClick += ShortcutButton_Click;
-
-            AddShortcutControl.OuterColor = Color.FromArgb(0, 74, 119);
-            AddShortcutControl.InnerColor = Color.FromArgb(0, 74, 119);    
-
-            AddShortcutControl.InnerTextColor = Color.White;
-            AddShortcutControl.InnerFontSize = 24;
+            privateFonts.AddFontFile(PATH + @"\OpenSans-Regular.ttf");
 
             InitializeCefSharp();
             LoadPrevious();
@@ -79,13 +71,6 @@ namespace WidgetsApp
             }
         }
 
-        private void ShortcutButton_Click(object sender, EventArgs e)
-        {
-            FlowPanel.Hide();
-            UserControl shortcut = new ShortcutForm();
-            Controls.Add(shortcut);
-        }
-
         public void CreateShortcut(WidgetData data)
         {
             AddShortcut(data);
@@ -98,6 +83,7 @@ namespace WidgetsApp
             {
                 OuterText = data.Name,
                 InnerText = data.Url,
+                InnerColor = data.Color
             };
 
             control.MouseClick += (sender, e) => LaunchShortcut(data);
@@ -154,6 +140,16 @@ namespace WidgetsApp
             else
             {
                 FlowPanel.Show();
+            }
+        }
+
+        private void AddShortcutControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                FlowPanel.Hide();
+                UserControl shortcut = new ShortcutForm();
+                Controls.Add(shortcut);
             }
         }
     }
