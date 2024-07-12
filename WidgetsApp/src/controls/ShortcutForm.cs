@@ -2,19 +2,30 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using WidgetsApp.src.controls;
 
 namespace WidgetsApp
 {
     public partial class ShortcutForm : UserControl
     {
+        bool isEdit = false;
+        ShortcutControl editing;
+
         public ShortcutForm()
         {
             InitializeComponent();
+        }
 
-            if (this.Parent is MainForm mainForm)
-            {
-                mainForm.HideFlow(true);
-            }
+        public ShortcutForm(ShortcutControl control)
+        {
+            InitializeComponent();
+
+            editing = control;
+
+            TitleLabel.Text = "Edit Shortcut";
+            NameTextBox.Text = control.OuterText;
+            UrlTextBox.Text = control.InnerText;
+            isEdit = true;
         }
 
         #region UrlBox
@@ -31,7 +42,6 @@ namespace WidgetsApp
             }
         }
         #endregion
-
 
         #region Done Button
         private void EnableDoneButton(bool b)
@@ -52,11 +62,21 @@ namespace WidgetsApp
 
         private void DoneButton_Click(object sender, EventArgs e)
         {
-            if (this.Parent is MainForm mainForm)
+            if (Parent is MainForm mainForm)
             {
-                mainForm.AddShortcut(new WidgetData(NameTextBox.Text, UrlTextBox.Text));
-                Close();
+                if (!isEdit)
+                {
+                    mainForm.CreateShortcut(new WidgetData(NameTextBox.Text, UrlTextBox.Text));
+                }
+                else
+                {
+                    ShortcutControl old = editing;
+                    old.OuterText = NameTextBox.Text;
+                    old.InnerText = UrlTextBox.Text;
+                    mainForm.SaveShortcut(old.GetWidgetData(), editing);
+                }
             }
+            Close();
         }
         #endregion
 
@@ -67,7 +87,7 @@ namespace WidgetsApp
 
         public void Close()
         {
-            if (this.Parent is MainForm mainForm)
+            if (Parent is MainForm mainForm)
             {
                 mainForm.HideFlow(false);
                 mainForm.Controls.Remove(this);
