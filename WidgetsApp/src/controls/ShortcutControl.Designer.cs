@@ -29,32 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.SettingsButton = new System.Windows.Forms.Button();
             this.ShowTimer = new System.Windows.Forms.Timer(this.components);
             this.HideTimer = new System.Windows.Forms.Timer(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SettingsButton = new WidgetsApp.src.controls.RoundButton();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // SettingsButton
-            // 
-            this.SettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.SettingsButton.BackColor = System.Drawing.Color.Transparent;
-            this.SettingsButton.FlatAppearance.BorderSize = 0;
-            this.SettingsButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            this.SettingsButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(60)))), ((int)(((byte)(60)))));
-            this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SettingsButton.Font = new System.Drawing.Font("Minecraft", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SettingsButton.Location = new System.Drawing.Point(89, 3);
-            this.SettingsButton.Name = "SettingsButton";
-            this.SettingsButton.Size = new System.Drawing.Size(31, 29);
-            this.SettingsButton.TabIndex = 2;
-            this.SettingsButton.Text = ":";
-            this.SettingsButton.UseVisualStyleBackColor = false;
-            this.SettingsButton.Visible = false;
-            this.SettingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
             // 
             // ShowTimer
             // 
@@ -87,6 +69,25 @@
             this.removeToolStripMenuItem.Text = "Remove";
             this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
             // 
+            // SettingsButton
+            // 
+            this.SettingsButton.BackColor = System.Drawing.Color.DimGray;
+            this.SettingsButton.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(46)))), ((int)(((byte)(111)))));
+            this.SettingsButton.BorderRadius = 40;
+            this.SettingsButton.BorderSize = 0;
+            this.SettingsButton.FlatAppearance.BorderSize = 0;
+            this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SettingsButton.Font = new System.Drawing.Font("Minecraft", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SettingsButton.ForeColor = System.Drawing.Color.Black;
+            this.SettingsButton.Location = new System.Drawing.Point(90, 0);
+            this.SettingsButton.Name = "SettingsButton";
+            this.SettingsButton.Size = new System.Drawing.Size(30, 30);
+            this.SettingsButton.TabIndex = 3;
+            this.SettingsButton.Text = ":";
+            this.SettingsButton.UseVisualStyleBackColor = false;
+            this.SettingsButton.Visible = false;
+            this.SettingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
+            // 
             // ShortcutControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -102,11 +103,11 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button SettingsButton;
         private System.Windows.Forms.Timer ShowTimer;
         private System.Windows.Forms.Timer HideTimer;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private RoundButton SettingsButton;
     }
 }

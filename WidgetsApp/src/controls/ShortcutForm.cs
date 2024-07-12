@@ -8,8 +8,7 @@ namespace WidgetsApp
 {
     public partial class ShortcutForm : UserControl
     {
-        bool isEdit = false;
-        ShortcutControl editing;
+        readonly ShortcutControl editing;
 
         public ShortcutForm()
         {
@@ -25,7 +24,6 @@ namespace WidgetsApp
             TitleLabel.Text = "Edit Shortcut";
             NameTextBox.Text = control.OuterText;
             UrlTextBox.Text = control.InnerText;
-            isEdit = true;
         }
 
         #region UrlBox
@@ -64,16 +62,29 @@ namespace WidgetsApp
         {
             if (Parent is MainForm mainForm)
             {
-                if (!isEdit)
-                {
-                    mainForm.CreateShortcut(new WidgetData(NameTextBox.Text, UrlTextBox.Text));
-                }
-                else
+                string t = UrlTextBox.Text;
+
+                if (editing != null)
                 {
                     ShortcutControl old = editing;
                     old.OuterText = NameTextBox.Text;
                     old.InnerText = UrlTextBox.Text;
+
+                    if (t.StartsWith("https://"))
+                    {
+                        old.InnerText = "https://" + t +  "/";
+                    }
+
                     mainForm.SaveShortcut(old.GetWidgetData(), editing);
+                }
+                else
+                {
+                    if (t.Length > 0)
+                    {
+                        Random random = new Random();
+                        Color InnerColor = Color.FromArgb(random.Next(150, 256), random.Next(150, 256), random.Next(150, 256));
+                        mainForm.CreateShortcut(new WidgetData(NameTextBox.Text, t, InnerColor));
+                    }
                 }
             }
             Close();

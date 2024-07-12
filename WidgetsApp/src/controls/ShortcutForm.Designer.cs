@@ -67,7 +67,7 @@
             this.UrlTextBox.TextChanged += new System.EventHandler(this.UrlBox_TextChanged);
             this.UrlTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.UrlBox_KeyPress);
             // 
-            // urlLabel
+            // UrlLabel
             // 
             this.UrlLabel.AutoSize = true;
             this.UrlLabel.ForeColor = System.Drawing.Color.White;
