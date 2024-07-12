@@ -2,48 +2,43 @@
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace WidgetsApp.src.controls
 {
     public partial class ShortcutControl : UserControl
     {
-        public Color OuterColor;
-        public Color InnerColor;
+        private Color outerColor;
+        private Color innerColor;
 
         private string innerText;
         private string outerText;
 
-        public Color InnerTextColor;
-        public int InnerFontSize;
+        private Color innerTextColor;
+        private int innerFontSize;
 
-        public int state;
+        private int state;
         private bool Elapsed;
 
-        public string InnerText { get => innerText; set => innerText = value; }
-        public string OuterText { get => outerText; set => outerText = value; }
+        public Color OuterColor { get => outerColor; set { outerColor = value; Invalidate(); } }
+        public Color InnerColor { get => innerColor; set { innerColor  = value; Invalidate(); }}
+        public string InnerText { get => innerText; set { innerText = value; Invalidate(); } }
+        public string OuterText { get => outerText; set { outerText = value; Invalidate(); } }
+        public Color InnerTextColor { get => innerTextColor; set { innerTextColor = value; Invalidate(); } }
+        public int InnerFontSize { get => innerFontSize; set { innerFontSize = value; Invalidate(); } }
+        public int State { get => state; set => state = value; }
 
         public ShortcutControl()
         {
             InitializeComponent();
-
-            OuterText = "Name";
-            InnerText = "Url";
-
             InnerTextColor = Color.Black;
             InnerFontSize = 12;
-
-            Elapsed = false;
-            state = 0;
 
             MouseEnter += (sender, e) => Hover_Event();
             MouseLeave += (sender, e) => Leave_Event();
 
             SettingsButton.MouseEnter += (sender, e) => Hover_Event();
 
-            Random random = new Random();
-            InnerColor = Color.FromArgb(random.Next(150, 256), random.Next(150, 256), random.Next(150, 256));
             OuterColor = Color.FromArgb(40, 40, 40);
         }
 
@@ -87,22 +82,24 @@ namespace WidgetsApp.src.controls
                 }
             }
 
-
             float outerFontSize = Math.Max(this.Width, this.Height) * 0.06f;
-            using (Font outerFont = new Font("Arial", outerFontSize))
-            {
-                SizeF outerTextSize = graphics.MeasureString(OuterText, outerFont);
-                using (Brush outerTextBrush = new SolidBrush(Color.White))
-                {
-                    float outerTextX = outerCircleX + (outerCircleSize - outerTextSize.Width) / 2;
-                    float outerTextY = outerCircleY + outerCircleSize + outerCircleSize / 5; // Increase the offset
 
-                    graphics.DrawString(OuterText, outerFont, outerTextBrush, outerTextX, outerTextY);
-                }
+            Font font = new Font("Arial", outerFontSize);
+
+            if (MainForm.privateFonts.Families.Length > 0)
+            {
+                font = new Font(MainForm.privateFonts.Families[0], outerFontSize);
+            }
+
+            SizeF outerTextSize = graphics.MeasureString(OuterText, font);
+            using (Brush outerTextBrush = new SolidBrush(Color.White))
+            {
+                float outerTextX = outerCircleX + (outerCircleSize - outerTextSize.Width) / 2;
+                float outerTextY = outerCircleY + outerCircleSize + outerCircleSize / 5; // Increase the offset
+
+                graphics.DrawString(OuterText, font, outerTextBrush, outerTextX, outerTextY);
             }
         }
-
-        
 
         private void Leave_Event()
         {
@@ -169,6 +166,17 @@ namespace WidgetsApp.src.controls
         public WidgetData GetWidgetData()
         {
             return new WidgetData(OuterText, InnerText);
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            this.Parent.BackColorChanged += new EventHandler((source, args) => {
+                if (this.DesignMode)
+                {
+                    this.Invalidate();
+                }
+            });
         }
     }
 }
