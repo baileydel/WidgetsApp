@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Drawing;
 
 namespace WidgetsApp
@@ -10,15 +9,17 @@ namespace WidgetsApp
         public Point Location { get; set; }
         public Size Size { get; set; }
         public string Url { get; set; }
+        public Color Color { get; set; }
 
 
         [JsonConstructor]
-        public WidgetData(string name, Size size, Point location, string url)
+        public WidgetData(string name, Size size, Point location, string url, Color color)
         {
             Name = name;
             Size = size;
             Location = location;
             Url = url;
+            Color = color;
         }
 
         public WidgetData(Size size, Point location, string url)
@@ -27,6 +28,15 @@ namespace WidgetsApp
             Size = size;
             Location = location;
             Url = url;
+        }
+
+        public WidgetData(string name, string url, Color color)
+        {
+            Name = name;
+            Url = url;
+            Size = new Size(526, 337);
+            Location = new Point(0, 0);
+            Color = color;
         }
 
         public WidgetData(string name, string url)
