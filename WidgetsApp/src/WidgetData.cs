@@ -11,6 +11,7 @@ namespace WidgetsApp
         public Size Size { get; set; }
         public string Url { get; set; }
 
+
         [JsonConstructor]
         public WidgetData(string name, Size size, Point location, string url)
         {
