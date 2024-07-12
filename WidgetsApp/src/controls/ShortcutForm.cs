@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Drawing;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
 
@@ -64,31 +65,46 @@ namespace WidgetsApp
             {
                 string t = UrlTextBox.Text;
 
-                if (editing != null)
+                if (t.Length > 0)
                 {
-                    ShortcutControl old = editing;
-                    old.OuterText = NameTextBox.Text;
-                    old.InnerText = UrlTextBox.Text;
-
-                    if (t.StartsWith("https://"))
+                    if (editing != null)
                     {
-                        old.InnerText = "https://" + t +  "/";
+                        ShortcutControl old = editing;
+                        old.OuterText = NameTextBox.Text;
+                        old.InnerText = UrlTextBox.Text;
+
+                        if (!t.StartsWith("https://"))
+                        {
+                            old.InnerText = "https://" + t + "/";
+                        }
+
+                        if (NameTextBox.Text.Length == 0)
+                        {
+                            old.Name = UrlTextBox.Text;
+                        }
+
+                        mainForm.SaveShortcut(old.GetWidgetData(), editing);
                     }
-
-                    mainForm.SaveShortcut(old.GetWidgetData(), editing);
-                }
-                else
-                {
-                    if (t.Length > 0)
+                    else
                     {
+                        if (!t.StartsWith("https://"))
+                        {
+                            t = "https://" + t + "/";
+                        }
+
+                        if (NameTextBox.Text.Length == 0)
+                        {
+                            NameTextBox.Text = UrlTextBox.Text;
+                        }
+
                         Random random = new Random();
                         Color InnerColor = Color.FromArgb(random.Next(150, 256), random.Next(150, 256), random.Next(150, 256));
                         mainForm.CreateShortcut(new WidgetData(NameTextBox.Text, t, InnerColor));
                     }
+                    Close();
                 }
+
             }
-            Close();
-        }
         #endregion
 
         private void CancelButton_Click(object sender, EventArgs e)
