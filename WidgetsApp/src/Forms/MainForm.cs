@@ -6,23 +6,21 @@ using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
+using WidgetsApp.src.Util;
 
 namespace WidgetsApp
 {
     public partial class MainForm : Form
     { 
-        public static readonly string PATH = AppDomain.CurrentDomain.BaseDirectory;
-        public static readonly string SAVEPATH = PATH + @"\save";
-        public static readonly string SCRIPTPATH = PATH + @"\scripts";
-        public static readonly string BROWSERPATH = PATH + @"\browser";
         public static readonly PrivateFontCollection privateFonts = new PrivateFontCollection();
+
+        private static readonly FileManager FileManager = new FileManager();
 
         public MainForm()
         {
-            MakePaths();
             InitializeComponent();
 
-            privateFonts.AddFontFile(PATH + @"\OpenSans-Regular.ttf");
+            privateFonts.AddFontFile(FileManager.PATH + @"\OpenSans-Regular.ttf");
 
             InitializeCefSharp();
             LoadPrevious();
@@ -32,7 +30,7 @@ namespace WidgetsApp
         {
             CefSettingsBase settings = new CefSettings
             {
-                CachePath = BROWSERPATH
+                CachePath = FileManager.BROWSERPATH
             };
 
             settings.CefCommandLineArgs.Add("enable-persistent-cookies", "1");
@@ -42,32 +40,13 @@ namespace WidgetsApp
             Cef.Initialize(settings);
         }
 
-        private void MakePaths()
-        {
-            if (!Directory.Exists(SAVEPATH))
-            {
-                Directory.CreateDirectory(SAVEPATH);
-            }
-
-            if (!Directory.Exists(SCRIPTPATH))
-            {
-                Directory.CreateDirectory(SCRIPTPATH);
-            }
-
-            if (!Directory.Exists(BROWSERPATH))
-            {
-                Directory.CreateDirectory(BROWSERPATH);
-            }
-        }
+        #region ShortcutManagement
 
         private void LoadPrevious()
         {
-            string[] files = Directory.GetFiles(SAVEPATH);
-
-            foreach (string file in files)
+           foreach (WidgetData data in FileManager.GetShortcutSaves())
             {
-                string json = File.ReadAllText(file);
-                AddShortcut(JsonConvert.DeserializeObject<WidgetData>(json));
+                AddShortcut(data);
             }
         }
 
@@ -81,8 +60,8 @@ namespace WidgetsApp
         {
             ShortcutControl control = new ShortcutControl()
             {
-                OuterText = data.Name,
-                InnerText = data.Url,
+                OuterText  = data.Name,
+                InnerText  = data.Url,
                 InnerColor = data.Color
             };
 
@@ -107,10 +86,7 @@ namespace WidgetsApp
 
         public void DeleteShortcut(ShortcutControl control)
         {
-            if (File.Exists(SAVEPATH + @"\" + control.OuterText + ".json"))
-            {
-                File.Delete(SAVEPATH + @"\" + control.OuterText + ".json");
-            }
+            FileManager.Delete(control.OuterText); 
         }
 
         public void SaveShortcut(WidgetData data, ShortcutControl edit)
@@ -120,8 +96,7 @@ namespace WidgetsApp
                 DeleteShortcut(edit);
             }
 
-            string json = JsonConvert.SerializeObject(data);
-            File.WriteAllText(SAVEPATH + @"\" + data.Name + ".json", json);
+            FileManager.Save(data);
         }
  
         public void LaunchShortcut(WidgetData data)
@@ -130,6 +105,8 @@ namespace WidgetsApp
             WidgetForm form = new WidgetForm(data);
             form.Show();
         }
+
+        #endregion
 
         public void HideFlow(bool b)
         {

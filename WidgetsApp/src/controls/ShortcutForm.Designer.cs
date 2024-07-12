@@ -55,6 +55,7 @@
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.Size = new System.Drawing.Size(483, 20);
             this.NameTextBox.TabIndex = 1;
+            this.NameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NameTextBox_KeyDown);
             // 
             // UrlTextBox
             // 
@@ -65,7 +66,7 @@
             this.UrlTextBox.Size = new System.Drawing.Size(483, 20);
             this.UrlTextBox.TabIndex = 3;
             this.UrlTextBox.TextChanged += new System.EventHandler(this.UrlBox_TextChanged);
-            this.UrlTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.UrlBox_KeyPress);
+            this.UrlTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.UrlTextBox_KeyDown);
             // 
             // UrlLabel
             // 

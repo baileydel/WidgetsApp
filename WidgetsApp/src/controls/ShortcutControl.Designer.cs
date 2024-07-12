@@ -73,7 +73,7 @@
             // 
             this.SettingsButton.BackColor = System.Drawing.Color.DimGray;
             this.SettingsButton.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(6)))), ((int)(((byte)(46)))), ((int)(((byte)(111)))));
-            this.SettingsButton.BorderRadius = 40;
+            this.SettingsButton.BorderRadius = 30;
             this.SettingsButton.BorderSize = 0;
             this.SettingsButton.FlatAppearance.BorderSize = 0;
             this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;

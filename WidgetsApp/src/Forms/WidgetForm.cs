@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using WidgetsApp.src.Util;
 
 
 namespace WidgetsApp
@@ -37,7 +38,7 @@ namespace WidgetsApp
             string f = data.Url.Replace("https://", "").Replace(".com", "").Replace("app.", "").Replace("www.", "");
             string[] j = f.Split('/');
 
-            File.WriteAllText(MainForm.PATH + @"\save\" + j[0] + ".json", json);
+            File.WriteAllText(FileManager.PATH + @"\save\" + j[0] + ".json", json);
         }
 
         private void WidgetForm_FormClosing(object sender, FormClosingEventArgs e)
