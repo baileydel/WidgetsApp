@@ -31,7 +31,7 @@
             this.NameLabel = new System.Windows.Forms.Label();
             this.NameTextBox = new System.Windows.Forms.TextBox();
             this.UrlTextBox = new System.Windows.Forms.TextBox();
-            this.urlLabel = new System.Windows.Forms.Label();
+            this.UrlLabel = new System.Windows.Forms.Label();
             this.TitleLabel = new System.Windows.Forms.Label();
             this.CancelButton = new WidgetsApp.src.controls.RoundButton();
             this.DoneButton = new WidgetsApp.src.controls.RoundButton();
@@ -69,13 +69,13 @@
             // 
             // urlLabel
             // 
-            this.urlLabel.AutoSize = true;
-            this.urlLabel.ForeColor = System.Drawing.Color.White;
-            this.urlLabel.Location = new System.Drawing.Point(22, 116);
-            this.urlLabel.Name = "urlLabel";
-            this.urlLabel.Size = new System.Drawing.Size(29, 13);
-            this.urlLabel.TabIndex = 2;
-            this.urlLabel.Text = "URL";
+            this.UrlLabel.AutoSize = true;
+            this.UrlLabel.ForeColor = System.Drawing.Color.White;
+            this.UrlLabel.Location = new System.Drawing.Point(22, 116);
+            this.UrlLabel.Name = "UrlLabel";
+            this.UrlLabel.Size = new System.Drawing.Size(29, 13);
+            this.UrlLabel.TabIndex = 2;
+            this.UrlLabel.Text = "URL";
             // 
             // TitleLabel
             // 
@@ -91,6 +91,7 @@
             // 
             // CancelButton
             // 
+            this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CancelButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.CancelButton.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(125)))), ((int)(((byte)(183)))));
             this.CancelButton.BorderRadius = 30;
@@ -108,10 +109,12 @@
             // 
             // DoneButton
             // 
+            this.DoneButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.DoneButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(42)))), ((int)(((byte)(42)))));
             this.DoneButton.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(4)))), ((int)(((byte)(125)))), ((int)(((byte)(183)))));
             this.DoneButton.BorderRadius = 30;
             this.DoneButton.BorderSize = 0;
+            this.DoneButton.Enabled = false;
             this.DoneButton.FlatAppearance.BorderSize = 0;
             this.DoneButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.DoneButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(112)))), ((int)(((byte)(112)))), ((int)(((byte)(112)))));
@@ -132,7 +135,7 @@
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.TitleLabel);
             this.Controls.Add(this.UrlTextBox);
-            this.Controls.Add(this.urlLabel);
+            this.Controls.Add(this.UrlLabel);
             this.Controls.Add(this.NameTextBox);
             this.Controls.Add(this.NameLabel);
             this.Name = "ShortcutForm";
@@ -147,7 +150,7 @@
         private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.TextBox NameTextBox;
         private System.Windows.Forms.TextBox UrlTextBox;
-        private System.Windows.Forms.Label urlLabel;
+        private System.Windows.Forms.Label UrlLabel;
         private System.Windows.Forms.Label TitleLabel;
         private src.controls.RoundButton CancelButton;
         private src.controls.RoundButton DoneButton;
