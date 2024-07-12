@@ -84,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\CefSharpHandler.cs" />
+    <Compile Include="src\controls\RoundButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="src\controls\ShortcutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
