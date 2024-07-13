@@ -1,12 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace WidgetsApp.src.Util
 {
@@ -69,6 +65,16 @@ namespace WidgetsApp.src.Util
             {
                 File.Delete(SAVEPATH + @"\" + name);
             }
+        }
+
+        public Image GetIcon(string name)
+        {
+            string path = SAVEPATH + $"\\{name}.png";
+            if (File.Exists(path))
+            {
+                return Image.FromFile(path);
+            }
+            return null;
         }
 
         private bool ValidateDirectory(string path)
