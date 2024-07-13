@@ -5,11 +5,13 @@ namespace WidgetsApp
 {
     public class WidgetData
     {
-        public string Name { get; set; }
+        public string Name { get; set; }   
         public Point Location { get; set; }
         public Size Size { get; set; }
         public string Url { get; set; }
         public Color Color { get; set; }
+
+        public string SavePath { get; set; }
 
 
         [JsonConstructor]
