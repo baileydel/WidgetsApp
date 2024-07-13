@@ -9,9 +9,9 @@ namespace WidgetsApp.src.Util
     internal class FileManager
     {
         public static readonly string PATH = AppDomain.CurrentDomain.BaseDirectory;
-        public static readonly string SAVEPATH = PATH + @"\save";
-        public static readonly string SCRIPTPATH = PATH + @"\scripts";
-        public static readonly string BROWSERPATH = PATH + @"\browser";
+        public static readonly string SAVEPATH = PATH + "save";
+        public static readonly string SCRIPTPATH = PATH + "scripts";
+        public static readonly string BROWSERPATH = PATH + "browser";
 
         public FileManager()
         {
@@ -48,6 +48,7 @@ namespace WidgetsApp.src.Util
                 {
                     string json = File.ReadAllText(file);
                     WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
+                    data.SavePath = file;
                     widgetDataList.Add(data);
                 }
             }
@@ -57,13 +58,27 @@ namespace WidgetsApp.src.Util
         public void Save(WidgetData data)
         {
             string json = JsonConvert.SerializeObject(data);
+
+            File.WriteAllText(SAVEPATH + @"\" + ValidateName(data.Name) + ".json", json);
+        }
+
+        /**
+         * Validate the name of the widget
+         * @param name The name of the widget
+         * @return The edited name of the widget, if the name is invalid
+         */
+        public string ValidateName(string name)
+        {
+            return name.Replace("https://", "").Replace("http://", "").Split('/')[0];
         }
 
         public void Delete(string name)
         {
-            if (Validate(name))
+            string path = SAVEPATH + $"\\{ValidateName(name)}.json";
+
+            if (File.Exists(path))
             {
-                File.Delete(SAVEPATH + @"\" + name);
+                File.Delete(path);
             }
         }
 
@@ -75,16 +90,6 @@ namespace WidgetsApp.src.Util
                 return Image.FromFile(path);
             }
             return null;
-        }
-
-        private bool ValidateDirectory(string path)
-        {
-            return Directory.Exists(path);
-        }
-
-        private bool Validate(string name)
-        {
-            return File.Exists(SAVEPATH + @"\" + name);
         }
     }   
 }
