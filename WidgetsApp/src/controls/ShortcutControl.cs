@@ -28,6 +28,8 @@ namespace WidgetsApp.src.controls
         public int InnerFontSize { get => innerFontSize; set { innerFontSize = value; Invalidate(); } }
         public int State { get => state; set => state = value; }
 
+        public Image Icon { get; set; }
+
         public ShortcutControl()
         {
             InitializeComponent();
@@ -63,33 +65,35 @@ namespace WidgetsApp.src.controls
             int innerCircleX = outerCircleX + (outerCircleSize - innerCircleSize) / 2;
             int innerCircleY = outerCircleY + (outerCircleSize - innerCircleSize) / 2;
 
-            using (SolidBrush innerBrush = new SolidBrush(InnerColor))
+            if (Icon != null)
             {
-                graphics.FillEllipse(innerBrush, innerCircleX, innerCircleY, innerCircleSize, innerCircleSize);
+                graphics.DrawImage(Icon, innerCircleX, innerCircleY, innerCircleSize, innerCircleSize);
             }
-
-            using (Font innerFont = new Font("Arial", InnerFontSize))
+            else
             {
-                string inner = InnerText[0].ToString().ToUpper();
-
-                SizeF innerTextSize = graphics.MeasureString(inner, innerFont);
-                using (Brush innerTextBrush = new SolidBrush(InnerTextColor))
+                using (SolidBrush innerBrush = new SolidBrush(InnerColor))
                 {
-                    float innerTextX = innerCircleX + (innerCircleSize - innerTextSize.Width) / 2;
-                    float innerTextY = innerCircleY + (innerCircleSize - innerTextSize.Height) / 2 + (InnerFontSize * 0.1f);
+                    graphics.FillEllipse(innerBrush, innerCircleX, innerCircleY, innerCircleSize, innerCircleSize);
+                }
 
-                    graphics.DrawString(inner, innerFont, innerTextBrush, innerTextX, innerTextY);
+                using (Font innerFont = new Font("Arial", InnerFontSize))
+                {
+                    string inner = InnerText[0].ToString().ToUpper();
+
+                    SizeF innerTextSize = graphics.MeasureString(inner, innerFont);
+                    using (Brush innerTextBrush = new SolidBrush(InnerTextColor))
+                    {
+                        float innerTextX = innerCircleX + (innerCircleSize - innerTextSize.Width) / 2;
+                        float innerTextY = innerCircleY + (innerCircleSize - innerTextSize.Height) / 2 + (InnerFontSize * 0.1f);
+
+                        graphics.DrawString(inner, innerFont, innerTextBrush, innerTextX, innerTextY);
+                    }
                 }
             }
 
             float outerFontSize = Math.Max(this.Width, this.Height) * 0.06f;
 
             Font font = new Font("Arial", outerFontSize);
-
-            if (MainForm.privateFonts.Families.Length > 0)
-            {
-                font = new Font(MainForm.privateFonts.Families[0], outerFontSize);
-            }
 
             SizeF outerTextSize = graphics.MeasureString(OuterText, font);
             using (Brush outerTextBrush = new SolidBrush(Color.White))
