@@ -30,6 +30,7 @@ namespace WidgetsApp
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.FlowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.AddShortcutControl = new WidgetsApp.src.controls.ShortcutControl();
             this.FlowPanel.SuspendLayout();
@@ -48,6 +49,7 @@ namespace WidgetsApp
             // 
             this.AddShortcutControl.BackColor = System.Drawing.Color.Transparent;
             this.AddShortcutControl.ForeColor = System.Drawing.Color.White;
+            this.AddShortcutControl.Icon = null;
             this.AddShortcutControl.InnerColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(74)))), ((int)(((byte)(119)))));
             this.AddShortcutControl.InnerFontSize = 24;
             this.AddShortcutControl.InnerText = "+";
@@ -67,8 +69,8 @@ namespace WidgetsApp
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.ClientSize = new System.Drawing.Size(558, 287);
             this.Controls.Add(this.FlowPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FlowPanel.ResumeLayout(false);
             this.ResumeLayout(false);
