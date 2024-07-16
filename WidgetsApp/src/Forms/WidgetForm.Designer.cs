@@ -13,7 +13,7 @@ namespace WidgetsApp
             // button1
             // 
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(439, 12);
+            this.button1.Location = new System.Drawing.Point(931, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -23,6 +23,7 @@ namespace WidgetsApp
             // 
             // WidgetForm
             // 
+            this.ClientSize = new System.Drawing.Size(776, 489);
             this.Controls.Add(this.button1);
             this.Name = "WidgetForm";
             this.ShowIcon = false;
