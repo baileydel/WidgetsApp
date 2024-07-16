@@ -48,6 +48,13 @@ namespace WidgetsApp.src.Util
                 {
                     string json = File.ReadAllText(file);
                     WidgetData data = JsonConvert.DeserializeObject<WidgetData>(json);
+
+                    if (data == null)
+                    {
+                        File.Delete(file);
+                        continue;
+                    }
+
                     data.SavePath = file;
                     widgetDataList.Add(data);
                 }
@@ -59,37 +66,22 @@ namespace WidgetsApp.src.Util
         {
             string json = JsonConvert.SerializeObject(data);
 
-            File.WriteAllText(SAVEPATH + @"\" + ValidateName(data.Name) + ".json", json);
-        }
-
-        /**
-         * Validate the name of the widget
-         * @param name The name of the widget
-         * @return The edited name of the widget, if the name is invalid
-         */
-        public string ValidateName(string name)
-        {
-            return name.Replace("https://", "").Replace("http://", "").Split('/')[0];
-        }
-
-        public void Delete(string name)
-        {
-            string path = SAVEPATH + $"\\{ValidateName(name)}.json";
-
-            if (File.Exists(path))
+            if (data.SavePath == null)
             {
-                File.Delete(path);
+                data.SavePath = SAVEPATH + $"\\{data.GetValidName()}.json";
+            }
+
+            File.WriteAllText(data.SavePath, json);
+        }
+
+        public void Delete(WidgetData widget)
+        {   
+            if (File.Exists(widget.SavePath))
+            {
+                File.Delete(widget.SavePath);
             }
         }
 
-        public Image GetIcon(string name)
-        {
-            string path = SAVEPATH + $"\\{name}.png";
-            if (File.Exists(path))
-            {
-                return Image.FromFile(path);
-            }
-            return null;
-        }
+        
     }   
 }
