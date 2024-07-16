@@ -1,12 +1,8 @@
 ﻿
 using System;
 using System.Drawing;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
-using WidgetsApp.src.Util;
 
 namespace WidgetsApp
 {
@@ -26,14 +22,14 @@ namespace WidgetsApp
             editing = control;
 
             TitleLabel.Text = "Edit Shortcut";
-            NameTextBox.Text = control.OuterText;
-            UrlTextBox.Text = control.InnerText;
+            NameTextBox.Text = control.Data.Name;
+            UrlTextBox.Text = control.Data.Url;
         }
 
         #region UrlBox
         private void UrlBox_TextChanged(object sender, EventArgs e)
         {
-            EnableDoneButton(UrlTextBox.TextLength > 0);
+            ValidateURL(UrlTextBox.Text);
         }
 
         private void UrlTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -42,9 +38,27 @@ namespace WidgetsApp
             {
                 if (UrlTextBox.Text.Length > 0)
                 {
-                    DoneButton_Click(sender, e);
+                    Submit();
                     e.Handled = true;
                     e.SuppressKeyPress = true;
+                }
+            }
+        }
+
+        private void NameTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+
+                if (UrlTextBox.TextLength > 0)
+                {
+                    Submit();
+                }
+                else
+                {
+                    UrlTextBox.Focus();
                 }
             }
         }
@@ -58,6 +72,8 @@ namespace WidgetsApp
 
             if (b)
             {
+                UrlLabel.ForeColor = Color.White;
+                ErrorLabel.Hide();
                 DoneButton.ForeColor = Color.FromArgb(6, 46, 111);
                 DoneButton.BackColor = Color.FromArgb(160, 189, 237);
             }
@@ -70,58 +86,47 @@ namespace WidgetsApp
 
         private void DoneButton_Click(object sender, EventArgs e)
         {
-            string t = UrlTextBox.Text;
+            Submit();
+        }
+        #endregion
 
-            if (t.Length == 0)
+        private void CancelButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void Submit()
+        {
+            if (!DoneButton.Enabled)
             {
                 return;
             }
 
             if (Parent is MainForm mainForm)
             {
+                if (NameTextBox.Text.Length == 0)
+                {
+                    NameTextBox.Text = UrlTextBox.Text;
+                }
+
+                UrlTextBox.Text = CompleteURL(UrlTextBox.Text);
+
                 if (editing != null)
                 {
-                    ShortcutControl old = editing;
-                    old.OuterText = NameTextBox.Text;
-                    old.InnerText = UrlTextBox.Text;
+                    mainForm.URLS.Remove(editing.Data.Url);
 
-                    if (NameTextBox.Text.Length == 0)
-                    {
-                        old.Name = UrlTextBox.Text;
-                    }
+                    editing.Data.Name = NameTextBox.Text;
+                    editing.Data.Url = UrlTextBox.Text;
 
-                    if (!t.StartsWith("https://"))
-                    {
-                        old.InnerText = "https://" + t + "/";
-                    }
-                    mainForm.SaveShortcut(old.GetWidgetData(), editing);
+                    mainForm.URLS.Add(editing.Data.Url);
+                    mainForm.SaveShortcut(editing.Data);
                 }
                 else
                 {
-                    if (NameTextBox.Text.Length == 0)
-                    {
-                        NameTextBox.Text = UrlTextBox.Text;
-                    }
-
-                    if (!t.StartsWith("https://"))
-                    {
-                        t = "https://" + t + "/";
-                    }
-
-                    Task task = DownloadImageAsync("https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://youtube.com&size=24", Path.Combine(FileManager.SAVEPATH, NameTextBox.Text + ".png"));
-
-                    Random random = new Random();
-                    Color InnerColor = Color.FromArgb(random.Next(150, 256), random.Next(150, 256), random.Next(150, 256));
-                    mainForm.CreateShortcut(new WidgetData(NameTextBox.Text, t, InnerColor));
+                    mainForm.CreateShortcut(new WidgetData(NameTextBox.Text, UrlTextBox.Text));
                 }
-                Close();
             }
-        }
-        #endregion
-
-        private void CancelButton_Click(object sender, EventArgs e)
-        {
-            Close(); 
+            Close();
         }
 
         public void Close()
@@ -133,47 +138,75 @@ namespace WidgetsApp
             }
         }
 
-        private void NameTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void ValidateURL(string url)
         {
-            if (e.KeyCode == Keys.Enter)
+            bool enable = true;
+            if (Parent is MainForm mainForm)
             {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
-
-                if (UrlTextBox.TextLength > 0)
+                if (url.Length == 0)
                 {
-                    DoneButton_Click(sender, e);
+                    enable = false;
                 }
-                else
+
+                string[] list = url.Split(':');
+
+                if (list.Length > 1)
                 {
-                    UrlTextBox.Focus();
+                    if (list[0] != "https" || list[1].Length == 0 || list[1].Contains(" ") || !list[1].StartsWith("//"))
+                    {
+                        UrlLabel.ForeColor = Color.FromArgb(242, 184, 181);
+                        ErrorLabel.Text = "Type a valid URL";
+                        ErrorLabel.Show();
+                        enable = false;
+                    }
+                }
+
+                if (mainForm.ContainsURL(url) || mainForm.ContainsURL(CompleteURL(url)))
+                {
+                    UrlLabel.ForeColor = Color.FromArgb(242, 184, 181);
+                    ErrorLabel.Text = "URL already exists";
+                    ErrorLabel.Show();
+                    enable = false;
                 }
             }
 
+            EnableDoneButton(enable);
         }
 
-        public async Task DownloadImageAsync(string imageUrl, string savePath)
+        private string CompleteURL(string url)
         {
-            using (HttpClient client = new HttpClient())
+            if (!url.StartsWith("https://"))
             {
-                try
-                {
-                    // Send a request to the URL
-                    HttpResponseMessage response = await client.GetAsync(imageUrl);
-                    response.EnsureSuccessStatusCode();
+                return "https://" + url;
+            }
+            return url;
+        }
 
-                    // Read the image data
-                    byte[] imageData = await response.Content.ReadAsByteArrayAsync();
+        private void UrlTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == ' ' || e.KeyChar == 127)
+            {
+                e.Handled = true;
+            }
 
-                    // Save the image data to a file
-                    File.WriteAllBytes(savePath, imageData);
+            if (e.KeyChar == 27)
+            {
+                e.Handled = true;
+                Close();
+            }
+        }
 
-                    Console.WriteLine("Image downloaded and saved successfully.");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"An error occurred: {ex.Message}");
-                }
+        private void NameTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 127)
+            {
+                e.Handled = true;
+            }
+
+            if (e.KeyChar == 27)
+            {
+                e.Handled = true;
+                Close();
             }
         }
     }
