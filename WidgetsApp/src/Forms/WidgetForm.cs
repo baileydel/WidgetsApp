@@ -1,25 +1,18 @@
-﻿using CefSharp.WinForms;
-using Newtonsoft.Json;
+﻿
+using CefSharp.WinForms;
 using System;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using WidgetsApp.src.Util;
 
 
 namespace WidgetsApp
 {
     public partial class WidgetForm : Form
     {
-        private ChromiumWebBrowser browser;
+        private readonly ChromiumWebBrowser browser;
 
         public WidgetForm(WidgetData data)
         {
             InitializeComponent();
-            if (data == null)
-            {
-                data = new WidgetData(new Size(526, 337), new Point(0, 0), "https://youtube.com");
-            }
 
             Location = data.Location;
             Size = data.Size;
@@ -27,24 +20,11 @@ namespace WidgetsApp
             browser = new ChromiumWebBrowser(data.Url);
 
             Controls.Add(browser);
+
+            this.Show();
         }
-
-        private void Save()
-        {
-            WidgetData data = new WidgetData(Size, Location, browser.Address);
-
-            string json = JsonConvert.SerializeObject(data);
-
-            string f = data.Url.Replace("https://", "").Replace(".com", "").Replace("app.", "").Replace("www.", "");
-            string[] j = f.Split('/');
-
-            File.WriteAllText(FileManager.PATH + @"\save\" + j[0] + ".json", json);
-        }
-
         private void WidgetForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Save();
-
             if (browser != null)
             {
                 browser.Dispose();
