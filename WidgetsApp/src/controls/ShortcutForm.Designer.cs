@@ -35,6 +35,7 @@
             this.TitleLabel = new System.Windows.Forms.Label();
             this.CancelButton = new WidgetsApp.src.controls.RoundButton();
             this.DoneButton = new WidgetsApp.src.controls.RoundButton();
+            this.ErrorLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // NameLabel
@@ -56,6 +57,7 @@
             this.NameTextBox.Size = new System.Drawing.Size(483, 20);
             this.NameTextBox.TabIndex = 1;
             this.NameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.NameTextBox_KeyDown);
+            this.NameTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NameTextBox_KeyPress);
             // 
             // UrlTextBox
             // 
@@ -67,6 +69,7 @@
             this.UrlTextBox.TabIndex = 3;
             this.UrlTextBox.TextChanged += new System.EventHandler(this.UrlBox_TextChanged);
             this.UrlTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.UrlTextBox_KeyDown);
+            this.UrlTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.UrlTextBox_KeyPress);
             // 
             // UrlLabel
             // 
@@ -127,11 +130,24 @@
             this.DoneButton.UseVisualStyleBackColor = false;
             this.DoneButton.Click += new System.EventHandler(this.DoneButton_Click);
             // 
+            // ErrorLabel
+            // 
+            this.ErrorLabel.AutoSize = true;
+            this.ErrorLabel.BackColor = System.Drawing.Color.Transparent;
+            this.ErrorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(184)))), ((int)(((byte)(181)))));
+            this.ErrorLabel.Location = new System.Drawing.Point(43, 155);
+            this.ErrorLabel.Name = "ErrorLabel";
+            this.ErrorLabel.Size = new System.Drawing.Size(113, 13);
+            this.ErrorLabel.TabIndex = 9;
+            this.ErrorLabel.Text = "Shortcut already exists";
+            this.ErrorLabel.Visible = false;
+            // 
             // ShortcutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
+            this.Controls.Add(this.ErrorLabel);
             this.Controls.Add(this.DoneButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.TitleLabel);
@@ -145,7 +161,6 @@
             this.PerformLayout();
 
         }
-
         #endregion
 
         private System.Windows.Forms.Label NameLabel;
@@ -155,5 +170,6 @@
         private System.Windows.Forms.Label TitleLabel;
         private src.controls.RoundButton CancelButton;
         private src.controls.RoundButton DoneButton;
+        private System.Windows.Forms.Label ErrorLabel;
     }
 }
