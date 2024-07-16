@@ -2,7 +2,13 @@
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using WidgetsApp.src.Util;
 
 namespace WidgetsApp.src.controls
 {
@@ -29,19 +35,42 @@ namespace WidgetsApp.src.controls
         public int State { get => state; set => state = value; }
 
         public Image Icon { get; set; }
+        public readonly WidgetData Data;
 
         public ShortcutControl()
         {
             InitializeComponent();
             InnerTextColor = Color.Black;
             InnerFontSize = 12;
+            OuterColor = Color.FromArgb(40, 40, 40);
+        }
 
-            MouseEnter += (sender, e) => Hover_Event();
-            MouseLeave += (sender, e) => Leave_Event();
+        public ShortcutControl(WidgetData data)
+        {
+            InitializeComponent();
 
-            SettingsButton.MouseEnter += (sender, e) => Hover_Event();
+            Data = data;
+
+            InnerColor = data.Color;
+
+            InnerText = data.GetValidURL()[0].ToString().ToUpper();
+            OuterText = data.Name;
 
             OuterColor = Color.FromArgb(40, 40, 40);
+            InnerTextColor = Color.Black;
+            InnerFontSize = 12;
+
+            Icon = GetIcon(data.GetValidName());
+
+            if (Icon == null)
+            {
+                Task task = DownloadImageAsync();
+
+                task.ContinueWith(t =>
+                {
+                    Icon = GetIcon(data.GetValidName());
+                });
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -78,7 +107,7 @@ namespace WidgetsApp.src.controls
 
                 using (Font innerFont = new Font("Arial", InnerFontSize))
                 {
-                    string inner = InnerText[0].ToString().ToUpper();
+                    string inner = InnerText;
 
                     SizeF innerTextSize = graphics.MeasureString(inner, innerFont);
                     using (Brush innerTextBrush = new SolidBrush(InnerTextColor))
@@ -105,33 +134,48 @@ namespace WidgetsApp.src.controls
             }
         }
 
-        private void Leave_Event()
+        public async Task DownloadImageAsync()
         {
-            BackColor = Color.FromArgb(32, 32, 32);
-            Elapsed = false;
-
-            HideTimer.Start();
-            ShowTimer.Stop();
-        }
-
-        private void Hover_Event()
-        {
-            BackColor = Color.FromArgb(50, 50, 50);
-
-            if (HideTimer.Enabled)
+            if (Data == null)
             {
-                HideTimer.Stop();
+                return;
             }
 
-            if (state == 0)
+            using (HttpClient client = new HttpClient())
             {
-                if (Elapsed)
+                try
                 {
-                    SettingsButton.Show();
+                    string ur = Data.Url;
+                    if (!ur.StartsWith("https://") || ur.StartsWith("http://"))
+                    {
+                        ur = "https://" + ur;
+                    }
+
+                    string[] s = ur.Split('.');
+
+                    if (s.Length <= 2)
+                    {
+                        ur = "https://" + ur.Replace("https://", "www.");
+                    }
+
+                    string encodedUrl = WebUtility.UrlEncode(ur);
+                    string faviconUrl = $"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={encodedUrl}&size=16";
+
+                    // Send a request to the URL
+                    HttpResponseMessage response = await client.GetAsync(faviconUrl);
+                    response.EnsureSuccessStatusCode();
+
+                    // Read the image data
+                    byte[] imageData = await response.Content.ReadAsByteArrayAsync();
+
+                    string savePath = Path.Combine(FileManager.SAVEPATH, Data.GetValidURL() + ".png");
+
+                    // Save the image data to a file
+                    File.WriteAllBytes(savePath, imageData);
                 }
-                else
+                catch (Exception ex)
                 {
-                    ShowTimer.Start();
+                    Console.WriteLine($"An error occurred: {ex.Message}");
                 }
             }
         }
@@ -181,6 +225,52 @@ namespace WidgetsApp.src.controls
                     this.Invalidate();
                 }
             });
+        }
+
+        private void SettingsButton_MouseEnter(object sender, EventArgs e)
+        {
+            BackColor = Color.FromArgb(50, 50, 50);
+
+            if (HideTimer.Enabled)
+            {
+                HideTimer.Stop();
+            }
+
+            if (state == 0)
+            {
+                if (Elapsed)
+                {
+                    SettingsButton.Show();
+                }
+                else
+                {
+                    ShowTimer.Start();
+                }
+            }
+        }
+
+        private void ShortcutControl_MouseEnter(object sender, EventArgs e)
+        {
+            SettingsButton_MouseEnter(sender, e);
+        }
+
+        private void ShortcutControl_Leave(object sender, EventArgs e)
+        {
+            BackColor = Color.FromArgb(32, 32, 32);
+            Elapsed = false;
+
+            HideTimer.Start();
+            ShowTimer.Stop();
+        }
+
+        public Image GetIcon(string name)
+        {
+            string path = FileManager.SAVEPATH + $"\\{name}.png";
+            if (File.Exists(path))
+            {
+                return Image.FromFile(path);
+            }
+            return null;
         }
     }
 }
