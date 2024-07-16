@@ -87,9 +87,10 @@
             this.SettingsButton.UseVisualStyleBackColor = false;
             this.SettingsButton.Visible = false;
             this.SettingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
+            this.SettingsButton.MouseEnter += new System.EventHandler(this.SettingsButton_MouseEnter);
             // 
             // ShortcutControl
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
@@ -97,6 +98,8 @@
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "ShortcutControl";
             this.Size = new System.Drawing.Size(120, 120);
+            this.Leave += new System.EventHandler(this.ShortcutControl_Leave);
+            this.MouseEnter += new System.EventHandler(this.ShortcutControl_MouseEnter);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
