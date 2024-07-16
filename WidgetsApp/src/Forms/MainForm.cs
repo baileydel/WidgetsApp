@@ -1,11 +1,9 @@
-﻿using CefSharp;
-using CefSharp.WinForms;
-using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing.Text;
-using System.IO;
 using System.Windows.Forms;
 using WidgetsApp.src.controls;
+using WidgetsApp.src.Handlers;
 using WidgetsApp.src.Util;
 
 namespace WidgetsApp
@@ -13,38 +11,21 @@ namespace WidgetsApp
     public partial class MainForm : Form
     { 
         public static readonly PrivateFontCollection privateFonts = new PrivateFontCollection();
-
-        private static readonly FileManager FileManager = new FileManager();
+        private readonly FileManager FileManager = new FileManager();
+        private readonly CefSharpManager CefSharpManager = new CefSharpManager();
+        public readonly List<string> URLS = new List<string>(); 
 
         public MainForm()
         {
-            InitializeComponent();
-
             privateFonts.AddFontFile(FileManager.PATH + @"\OpenSans-Regular.ttf");
-
-            InitializeCefSharp();
+            InitializeComponent();
             LoadPrevious();
         }
 
-        private void InitializeCefSharp()
-        {
-            CefSettingsBase settings = new CefSettings
-            {
-                CachePath = FileManager.BROWSERPATH
-            };
-
-            settings.CefCommandLineArgs.Add("enable-persistent-cookies", "1");
-
-            CefSharpSettings.ConcurrentTaskExecution = true;
-            CefSharpSettings.ShutdownOnExit = true;
-            Cef.Initialize(settings);
-        }
-
         #region ShortcutManagement
-
         private void LoadPrevious()
         {
-           foreach (WidgetData data in FileManager.GetShortcutSaves())
+            foreach (WidgetData data in FileManager.GetShortcutSaves())
             {
                 AddShortcut(data);
             }
@@ -53,17 +34,14 @@ namespace WidgetsApp
         public void CreateShortcut(WidgetData data)
         {
             AddShortcut(data);
-            SaveShortcut(data, null);
+            FileManager.Save(data);
         }
 
         public void AddShortcut(WidgetData data)
         {
-            ShortcutControl control = new ShortcutControl()
-            {
-                OuterText  = data.Name,
-                InnerText  = data.Url,
-                InnerColor = data.Color
-            };
+            URLS.Add(data.Url);
+
+            ShortcutControl control = new ShortcutControl(data);
 
             control.MouseClick += (sender, e) => LaunchShortcut(data);
       
@@ -74,36 +52,48 @@ namespace WidgetsApp
         public void EditShortcut(ShortcutControl shortcutControl)
         {
             FlowPanel.Hide();
-            UserControl shortcut = new ShortcutForm(shortcutControl);
-            Controls.Add(shortcut);
+            Controls.Add(new ShortcutForm(shortcutControl));
         }
 
         public void RemoveShortcut(ShortcutControl control)
         {
             FlowPanel.Controls.Remove(control);
-            DeleteShortcut(control);
+
+            URLS.Remove(control.Data.Url);
+
+            FileManager.Delete(control.Data);
         }
 
-        public void DeleteShortcut(ShortcutControl control)
+        public void SaveShortcut(WidgetData data)
         {
-            FileManager.Delete(control.OuterText); 
-        }
-
-        public void SaveShortcut(WidgetData data, ShortcutControl edit)
-        {
-            if (edit != null)
-            {
-                DeleteShortcut(edit);
-            }
-
             FileManager.Save(data);
         }
  
         public void LaunchShortcut(WidgetData data)
         {
+            if (!CefSharpManager.IsInitialized())
+            {
+                CefSharpManager.Initialize();
+            }
+
             Console.WriteLine("Launching shortcut");
-            WidgetForm form = new WidgetForm(data);
-            form.Show();
+            //TODO Store widgetform in a list
+            new WidgetForm(data);
+        }
+
+        private void AddShortcutControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                FlowPanel.Hide();
+                UserControl shortcut = new ShortcutForm();
+                Controls.Add(shortcut);
+            }
+        }
+
+        public bool ContainsURL(string url)
+        {
+            return URLS.Contains(url);
         }
 
         #endregion
@@ -117,16 +107,6 @@ namespace WidgetsApp
             else
             {
                 FlowPanel.Show();
-            }
-        }
-
-        private void AddShortcutControl_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                FlowPanel.Hide();
-                UserControl shortcut = new ShortcutForm();
-                Controls.Add(shortcut);
             }
         }
     }
