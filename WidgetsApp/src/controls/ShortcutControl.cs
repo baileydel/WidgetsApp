@@ -42,11 +42,13 @@ namespace WidgetsApp.src.controls
         public ShortcutControl()
         {
             InitializeComponent();
+            Init();
         }
 
         public ShortcutControl(WidgetData data)
         {
             InitializeComponent();
+            Init();
 
             Data = data;
 
@@ -68,6 +70,11 @@ namespace WidgetsApp.src.controls
             {
                 BaseDomain = parts[0];
             }
+
+            if (SubDomain == null)
+            {
+                SubDomain = "www.";
+            }
            
             InnerColor = data.Color;
             InnerText = BaseDomain[0].ToString().ToUpper();
@@ -83,6 +90,13 @@ namespace WidgetsApp.src.controls
                     Icon = GetIcon(data.GetValidName());
                 });
             }
+        }
+
+        private void Init()
+        {
+            InnerFontSize = 12;
+            OuterColor = Color.FromArgb(40, 40, 40);
+            InnerTextColor = Color.Black;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -157,20 +171,7 @@ namespace WidgetsApp.src.controls
             {
                 try
                 {
-                    string ur = Data.Url;
-                    if (!ur.StartsWith("https://") || ur.StartsWith("http://"))
-                    {
-                        ur = "https://" + ur;
-                    }
-
-                    string[] s = ur.Split('.');
-
-                    if (s.Length <= 2)
-                    {
-                        ur = "https://" + ur.Replace("https://", "www.");
-                    }
-
-                    string encodedUrl = WebUtility.UrlEncode(ur);
+                    string encodedUrl = WebUtility.UrlEncode(HttpLike + SubDomain + BaseDomain);
                     string faviconUrl = $"https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url={encodedUrl}&size=16";
 
                     // Send a request to the URL
@@ -179,8 +180,7 @@ namespace WidgetsApp.src.controls
 
                     // Read the image data
                     byte[] imageData = await response.Content.ReadAsByteArrayAsync();
-
-                    string savePath = Path.Combine(FileManager.SAVEPATH, Data.GetValidURL() + ".png");
+                    string savePath = Path.Combine(FileManager.SAVEPATH, BaseDomain + ".png");
 
                     // Save the image data to a file
                     File.WriteAllBytes(savePath, imageData);
@@ -194,7 +194,7 @@ namespace WidgetsApp.src.controls
 
         public Image GetIcon(string name)
         {
-            string path = FileManager.SAVEPATH + $"\\{name}.png";
+            string path = FileManager.SAVEPATH + $"\\{BaseDomain}.png";
             if (File.Exists(path))
             {
                 return Image.FromFile(path);
@@ -271,7 +271,7 @@ namespace WidgetsApp.src.controls
             SettingsButton_MouseEnter(sender, e);
         }
 
-        private void ShortcutControl_Leave(object sender, EventArgs e)
+        private void ShortcutControl_MouseLeave(object sender, EventArgs e)
         {
             BackColor = Color.FromArgb(32, 32, 32);
             Elapsed = false;

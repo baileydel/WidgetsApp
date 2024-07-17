@@ -43,7 +43,7 @@ namespace WidgetsApp
 
             ShortcutControl control = new ShortcutControl(data);
 
-            control.MouseClick += (sender, e) => LaunchShortcut(data);
+            control.MouseClick += (sender, e) => LaunchShortcut(sender, e, data);
       
             FlowPanel.Controls.Add(control);
             FlowPanel.Controls.SetChildIndex(AddShortcutControl, FlowPanel.Controls.Count - 1);
@@ -69,16 +69,19 @@ namespace WidgetsApp
             FileManager.Save(data);
         }
  
-        public void LaunchShortcut(WidgetData data)
+        public void LaunchShortcut(Object sender, MouseEventArgs args, WidgetData data)
         {
-            if (!CefSharpManager.IsInitialized())
+            if (args.Button == MouseButtons.Left)
             {
-                CefSharpManager.Initialize();
-            }
+                if (!CefSharpManager.IsInitialized())
+                {
+                    CefSharpManager.Initialize();
+                }
 
-            Console.WriteLine("Launching shortcut");
-            //TODO Store widgetform in a list
-            new WidgetForm(data);
+                Console.WriteLine("Launching shortcut");
+                //TODO Store widgetform in a list
+                new WidgetForm(data);
+            }
         }
 
         private void AddShortcutControl_MouseClick(object sender, MouseEventArgs e)
