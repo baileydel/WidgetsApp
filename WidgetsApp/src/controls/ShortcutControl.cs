@@ -5,7 +5,7 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WidgetsApp.src.Util;
@@ -27,7 +27,7 @@ namespace WidgetsApp.src.controls
         private bool Elapsed;
 
         public Color OuterColor { get => outerColor; set { outerColor = value; Invalidate(); } }
-        public Color InnerColor { get => innerColor; set { innerColor  = value; Invalidate(); }}
+        public Color InnerColor { get => innerColor; set { innerColor = value; Invalidate(); } }
         public string InnerText { get => innerText; set { innerText = value; Invalidate(); } }
         public string OuterText { get => outerText; set { outerText = value; Invalidate(); } }
         public Color InnerTextColor { get => innerTextColor; set { innerTextColor = value; Invalidate(); } }
@@ -37,12 +37,13 @@ namespace WidgetsApp.src.controls
         public Image Icon { get; set; }
         public readonly WidgetData Data;
 
+        public string HttpLike;
+        public string BaseDomain;
+        public string SubDomain;
+
         public ShortcutControl()
         {
             InitializeComponent();
-            InnerTextColor = Color.Black;
-            InnerFontSize = 12;
-            OuterColor = Color.FromArgb(40, 40, 40);
         }
 
         public ShortcutControl(WidgetData data)
@@ -51,17 +52,30 @@ namespace WidgetsApp.src.controls
 
             Data = data;
 
-            InnerColor = data.Color;
+            string url = Data.Url;
+            string[] parts = url.Split(new string[] { "//" }, StringSplitOptions.None);
 
-            InnerText = data.GetValidURL()[0].ToString().ToUpper();
+            if (parts.Length > 1)
+            {
+                HttpLike = parts[0] + "//";
+            }
+
+            parts = parts[parts.Length - 1].Split('.');
+            if (parts.Length > 2)
+            {
+                SubDomain = parts[0];
+                BaseDomain = parts[parts.Length - 2] + "." + parts[parts.Length - 1];
+            }
+            else if (parts.Length == 1)
+            {
+                BaseDomain = parts[0];
+            }
+           
+            InnerColor = data.Color;
+            InnerText = BaseDomain[0].ToString().ToUpper();
             OuterText = data.Name;
 
-            OuterColor = Color.FromArgb(40, 40, 40);
-            InnerTextColor = Color.Black;
-            InnerFontSize = 12;
-
             Icon = GetIcon(data.GetValidName());
-
             if (Icon == null)
             {
                 Task task = DownloadImageAsync();
@@ -180,6 +194,16 @@ namespace WidgetsApp.src.controls
             }
         }
 
+        public Image GetIcon(string name)
+        {
+            string path = FileManager.SAVEPATH + $"\\{name}.png";
+            if (File.Exists(path))
+            {
+                return Image.FromFile(path);
+            }
+            return null;
+        }
+
         private void SettingsButton_Click(object sender, EventArgs e)
         {
             contextMenuStrip1.Show(SettingsButton, new Point(0, SettingsButton.Height));
@@ -209,11 +233,6 @@ namespace WidgetsApp.src.controls
             {
                 mainForm.RemoveShortcut(this);
             }
-        }
-
-        public WidgetData GetWidgetData()
-        {
-            return new WidgetData(OuterText, InnerText);
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -261,16 +280,6 @@ namespace WidgetsApp.src.controls
 
             HideTimer.Start();
             ShowTimer.Stop();
-        }
-
-        public Image GetIcon(string name)
-        {
-            string path = FileManager.SAVEPATH + $"\\{name}.png";
-            if (File.Exists(path))
-            {
-                return Image.FromFile(path);
-            }
-            return null;
         }
     }
 }

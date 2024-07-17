@@ -1,4 +1,6 @@
-﻿namespace WidgetsApp.src.controls
+﻿using System.Drawing;
+
+namespace WidgetsApp.src.controls
 {
     partial class ShortcutControl
     {
@@ -79,7 +81,7 @@
             this.SettingsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.SettingsButton.Font = new System.Drawing.Font("Minecraft", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SettingsButton.ForeColor = System.Drawing.Color.Black;
-            this.SettingsButton.Location = new System.Drawing.Point(90, 0);
+            this.SettingsButton.Location = new System.Drawing.Point(90, 3);
             this.SettingsButton.Name = "SettingsButton";
             this.SettingsButton.Size = new System.Drawing.Size(30, 30);
             this.SettingsButton.TabIndex = 3;
@@ -90,12 +92,15 @@
             this.SettingsButton.MouseEnter += new System.EventHandler(this.SettingsButton_MouseEnter);
             // 
             // ShortcutControl
-            //
+            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.Controls.Add(this.SettingsButton);
             this.ForeColor = System.Drawing.Color.White;
+            this.InnerTextColor = System.Drawing.Color.Black;
+            this.InnerFontSize = 12;
+            this.OuterColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.Name = "ShortcutControl";
             this.Size = new System.Drawing.Size(120, 120);
             this.Leave += new System.EventHandler(this.ShortcutControl_Leave);

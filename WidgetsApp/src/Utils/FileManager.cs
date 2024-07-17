@@ -81,7 +81,5 @@ namespace WidgetsApp.src.Util
                 File.Delete(widget.SavePath);
             }
         }
-
-        
     }   
 }

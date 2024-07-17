@@ -94,16 +94,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Handlers\CefSharpManager.cs" />
-    <Compile Include="src\Handlers\CefSharpHandler.cs" />
-    <Compile Include="src\Controls\RoundButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="src\Controls\ShortcutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="src\Controls\ShortcutControl.Designer.cs">
       <DependentUpon>ShortcutControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="src\Handlers\CefSharpManager.cs" />
+    <Compile Include="src\Handlers\CefSharpHandler.cs" />
+    <Compile Include="src\Controls\RoundButton.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="src\Utils\FileManager.cs" />
     <Compile Include="src\Data\WidgetData.cs" />
