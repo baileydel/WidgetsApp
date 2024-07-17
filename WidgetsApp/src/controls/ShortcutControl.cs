@@ -5,7 +5,6 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WidgetsApp.src.Util;
@@ -23,23 +22,22 @@ namespace WidgetsApp.src.controls
         private Color innerTextColor;
         private int innerFontSize;
 
-        private int state;
-        private bool Elapsed;
-
         public Color OuterColor { get => outerColor; set { outerColor = value; Invalidate(); } }
         public Color InnerColor { get => innerColor; set { innerColor = value; Invalidate(); } }
         public string InnerText { get => innerText; set { innerText = value; Invalidate(); } }
         public string OuterText { get => outerText; set { outerText = value; Invalidate(); } }
         public Color InnerTextColor { get => innerTextColor; set { innerTextColor = value; Invalidate(); } }
         public int InnerFontSize { get => innerFontSize; set { innerFontSize = value; Invalidate(); } }
-        public int State { get => state; set => state = value; }
-
+        
+        public int State { get; set; }
         public Image Icon { get; set; }
+
         public readonly WidgetData Data;
 
         public string HttpLike;
         public string BaseDomain;
         public string SubDomain;
+        private bool Elapsed;
 
         public ShortcutControl()
         {
@@ -255,7 +253,7 @@ namespace WidgetsApp.src.controls
                 HideTimer.Stop();
             }
 
-            if (state == 0)
+            if (State == 0)
             {
                 if (Elapsed)
                 {
