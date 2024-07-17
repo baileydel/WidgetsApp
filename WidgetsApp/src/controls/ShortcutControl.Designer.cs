@@ -93,18 +93,17 @@ namespace WidgetsApp.src.controls
             // 
             // ShortcutControl
             // 
+
+
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))), ((int)(((byte)(32)))));
             this.Controls.Add(this.SettingsButton);
             this.ForeColor = System.Drawing.Color.White;
-            this.InnerTextColor = System.Drawing.Color.Black;
-            this.InnerFontSize = 12;
-            this.OuterColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
             this.Name = "ShortcutControl";
             this.Size = new System.Drawing.Size(120, 120);
-            this.Leave += new System.EventHandler(this.ShortcutControl_Leave);
             this.MouseEnter += new System.EventHandler(this.ShortcutControl_MouseEnter);
+            this.MouseLeave += new System.EventHandler(this.ShortcutControl_MouseLeave);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
 
